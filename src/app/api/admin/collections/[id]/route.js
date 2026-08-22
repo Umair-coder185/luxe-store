@@ -2,7 +2,7 @@
 
 import { NextResponse } from "next/server";
 import { ObjectId } from "mongoose";
-import dbConnect from "@/lib/db/dbConnect";
+import dbConnect from "@/lib/db";
 import Collection from "@/models/Collection";
 import { requireAdmin } from "@/lib/auth/guards";
 import { updateCollectionSchema } from "@/lib/validation/entitySchema";
@@ -11,7 +11,7 @@ import { revalidateTag } from "next/cache";
 
 export async function PUT(request, { params }) {
   try {
-    const authError = requireAdmin(request);
+    const { error: authError } = await requireAdmin(request);
     if (authError) return authError;
 
     const { id } = params;
@@ -97,7 +97,7 @@ export async function PUT(request, { params }) {
 
 export async function DELETE(request, { params }) {
   try {
-    const authError = requireAdmin(request);
+    const { error: authError } = await requireAdmin(request);
     if (authError) return authError;
 
     const { id } = params;

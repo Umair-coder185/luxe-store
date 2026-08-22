@@ -1,7 +1,7 @@
 // app/api/admin/brands/route.js
 
 import { NextResponse } from "next/server";
-import dbConnect from "@/lib/db/dbConnect";
+import dbConnect from "@/lib/db";
 import Brand from "@/models/Brand";
 import { requireAdmin } from "@/lib/auth/guards";
 import { createBrandSchema } from "@/lib/validation/entitySchema";
@@ -13,7 +13,7 @@ const MAX_PAGE_SIZE = 100;
 
 export async function GET(request) {
   try {
-    const authError = requireAdmin(request);
+    const { error: authError } = await requireAdmin(request);
     if (authError) return authError;
 
     const { searchParams } = request.nextUrl;
@@ -71,7 +71,7 @@ export async function GET(request) {
 
 export async function POST(request) {
   try {
-    const authError = requireAdmin(request);
+    const { error: authError } = await requireAdmin(request);
     if (authError) return authError;
 
     const body = await request.json();

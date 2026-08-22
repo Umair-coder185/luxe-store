@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { COOKIES } from "@/constants/cookies";
 
 const PUBLIC_PATHS = ["/sign-in", "/sign-up", "/forgot-password"];
 
@@ -18,7 +19,7 @@ export function middleware(request) {
     return NextResponse.next();
   }
 
-  const token = request.cookies.get("token")?.value;
+  const token = request.cookies.get(COOKIES.ACCESS_TOKEN)?.value;
 
   // Protect admin UI pages
   if (pathname.startsWith("/admin")) {

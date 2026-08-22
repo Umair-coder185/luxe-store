@@ -29,6 +29,7 @@ import { getCookie } from './session';
 import { COOKIES } from '../../constants/cookies';
 import User from '../../models/User';
 import { ROLES } from '../../constants/roles';
+import dbConnect from '../db';
 
 // ── Core (shared by both contexts) ───────────────────────────
 // Returns PLAIN DATA only — never a Response. Response wrapping
@@ -46,6 +47,7 @@ async function authenticate(accessToken) {
     return { user: null, error: 'Invalid or expired token', status: 401 };
   }
 
+  await dbConnect();
   const user = await User.findById(payload.sub).select('-password').lean();
 
   if (!user) {
