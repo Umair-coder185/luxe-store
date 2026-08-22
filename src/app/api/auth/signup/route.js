@@ -22,7 +22,7 @@ import User from '@/models/User.js';
 import { signAccessToken, signRefreshToken } from '@/lib/auth/jwt.js';
 import { getAuthCookieHeaders } from '@/lib/auth/session.js';
 import { validateSignup } from '@/lib/validation/auth.js';
-import dbConnect from '@/lib/db/index.js';
+import dbConnect from '@/lib/db';
 
 export async function POST(request) {
   try {

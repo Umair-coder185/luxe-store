@@ -20,7 +20,8 @@ function SignUpForm() {
   const redirectTo = getSafeRedirect(searchParams.get('redirectTo') || '/');
   const { refetchSession } = useAuth();
 
-  const [name, setName] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -42,7 +43,7 @@ function SignUpForm() {
       const res = await fetch('/api/auth/sign-up', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, password }),
+        body: JSON.stringify({ firstName, lastName, email, password }),
       });
 
       if (!res.ok) {
@@ -85,23 +86,43 @@ function SignUpForm() {
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-5">
           {/* Name */}
-          <div>
-            <label
-              htmlFor="name"
-              className="block text-sm font-medium text-neutral-700"
-            >
-              Full name
-            </label>
-            <input
-              id="name"
-              type="text"
-              required
-              autoComplete="name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="mt-2 block w-full rounded-xl border border-neutral-300 bg-white px-3.5 py-3 text-sm text-neutral-900 shadow-sm transition-shadow placeholder:text-neutral-400 focus:border-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-400/20"
-              placeholder="John Doe"
-            />
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label
+                htmlFor="firstName"
+                className="block text-sm font-medium text-neutral-700"
+              >
+                First name
+              </label>
+              <input
+                id="firstName"
+                type="text"
+                required
+                autoComplete="given-name"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                className="mt-2 block w-full rounded-xl border border-neutral-300 bg-white px-3.5 py-3 text-sm text-neutral-900 shadow-sm transition-shadow placeholder:text-neutral-400 focus:border-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-400/20"
+                placeholder="John"
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="lastName"
+                className="block text-sm font-medium text-neutral-700"
+              >
+                Last name
+              </label>
+              <input
+                id="lastName"
+                type="text"
+                required
+                autoComplete="family-name"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                className="mt-2 block w-full rounded-xl border border-neutral-300 bg-white px-3.5 py-3 text-sm text-neutral-900 shadow-sm transition-shadow placeholder:text-neutral-400 focus:border-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-400/20"
+                placeholder="Doe"
+              />
+            </div>
           </div>
 
           {/* Email */}

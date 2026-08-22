@@ -38,7 +38,7 @@ import {
 } from '@/lib/auth/jwt.js';
 import { getCookie, getAuthCookieHeaders, getClearCookieHeaders } from '@/lib/auth/session.js';
 import { COOKIES } from '@/constants/cookies.js';
-import dbConnect from '@/lib/db/index.js';
+import dbConnect from '@/lib/db';
 
 // ── Error helpers ────────────────────────────────────────────
 

@@ -27,7 +27,7 @@ import User from '@/models/User.js';
 import { verifyRefreshToken } from '@/lib/auth/jwt.js';
 import { getCookie, getClearCookieHeaders } from '@/lib/auth/session.js';
 import { COOKIES } from '@/constants/cookies.js';
-import dbConnect from '@/lib/db/index.js';
+import dbConnect from '@/lib/db';
 
 export async function POST(request) {
   // Build success response with cookies cleared — FIRST.

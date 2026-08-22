@@ -10,29 +10,47 @@ export function SessionProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // Pure async fetcher: returns the user (or null), does not set state directly.
   const fetchSession = useCallback(async () => {
     try {
       const res = await fetch('/api/auth/me');
       if (res.ok) {
         const { user } = await res.json();
-        setUser(user);
-      } else {
-        setUser(null);
+        return user;
       }
+      return null;
     } catch {
-      setUser(null);
-    } finally {
-      setLoading(false);
+      return null;
     }
   }, []);
 
+  // Initial load: uses the fetcher and safely sets state only if still mounted.
   useEffect(() => {
-    fetchSession();
+    let mounted = true;
+    fetchSession().then((fetchedUser) => {
+      if (mounted) {
+        setUser(fetchedUser);
+        setLoading(false);
+      }
+    });
+    return () => {
+      mounted = false;
+    };
   }, [fetchSession]);
 
+  // Refetch for consumers (e.g. after login/signup)
+  const refetchSession = useCallback(async () => {
+    const fetchedUser = await fetchSession();
+    setUser(fetchedUser);
+  }, [fetchSession]);
+
+  // Sync session across tabs when window gains focus
   useEffect(() => {
-    window.addEventListener('focus', fetchSession);
-    return () => window.removeEventListener('focus', fetchSession);
+    const onFocus = () => {
+      fetchSession().then((fetchedUser) => setUser(fetchedUser));
+    };
+    window.addEventListener('focus', onFocus);
+    return () => window.removeEventListener('focus', onFocus);
   }, [fetchSession]);
 
   const signOut = useCallback(async () => {
@@ -45,7 +63,7 @@ export function SessionProvider({ children }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, loading, signOut, refetchSession: fetchSession }}>
+    <AuthContext.Provider value={{ user, loading, signOut, refetchSession }}>
       {children}
     </AuthContext.Provider>
   );
