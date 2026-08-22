@@ -41,8 +41,8 @@ export async function deleteBrand(id) {
   if (!brand) throw new Error('Brand not found');
 
   // Delete protection: Check if products depend on this brand
-  // Product model uses `brand` as a string (the name of the brand)
-  const productCount = await Product.countDocuments({ brand: brand.name });
+  // Product model uses `brand` as an ObjectId
+  const productCount = await Product.countDocuments({ brand: id });
 
   if (productCount > 0) {
     throw new Error(`Cannot delete brand. ${productCount} product(s) are currently assigned to it.`);

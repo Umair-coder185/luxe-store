@@ -49,11 +49,18 @@ const ProductSchema = new Schema(
       required: true,
     },
     brand: {
-      type: String,
-      trim: true,
-      // Only keep this indexed if you'll actually filter by brand on the storefront.
-      // If it's display-only for now, drop `index: true` until that query exists.
-      index: true,
+      type: Schema.Types.ObjectId,
+      ref: "Brand",
+      required: true,
+    },
+    collections: {
+      type: [
+        {
+          type: Schema.Types.ObjectId,
+          ref: "Collection",
+        },
+      ],
+      default: [],
     },
     stock: {
       type: Number,

@@ -50,15 +50,10 @@ export async function deleteCollection(id) {
   const collection = await Collection.findById(id).lean();
   if (!collection) throw new Error('Collection not found');
 
-  // Delete protection: Inspect Product model.
-  // The current Product schema does not have a `collection` or `collections` field.
-  // We check if it exists in the schema to be future-proof or gracefully allow deletion.
-  if (Product.schema.paths.collection || Product.schema.paths.collections) {
-    const query = Product.schema.paths.collections ? { collections: id } : { collection: id };
-    const productCount = await Product.countDocuments(query);
-    if (productCount > 0) {
-      throw new Error(`Cannot delete collection. ${productCount} product(s) are currently assigned to it.`);
-    }
+  // Delete protection: Check if products depend on this collection
+  const productCount = await Product.countDocuments({ collections: id });
+  if (productCount > 0) {
+    throw new Error(`Cannot delete collection. ${productCount} product(s) are currently assigned to it.`);
   }
 
   await Collection.findByIdAndDelete(id);
