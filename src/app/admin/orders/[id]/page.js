@@ -11,7 +11,8 @@ export const metadata = {
 export default async function OrderDetailPage({ params }) {
   await requireAdminSC();
 
-  const order = await getOrderById(params.id);
+  const resolvedParams = await params;
+  const order = await getOrderById(resolvedParams.id);
 
   if (!order) {
     notFound();

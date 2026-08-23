@@ -11,10 +11,11 @@ export const metadata = {
 export default async function OrdersPage({ searchParams }) {
   await requireAdminSC();
 
-  const search = searchParams?.search || '';
-  const status = searchParams?.status || '';
-  const paymentStatus = searchParams?.paymentStatus || '';
-  const page = parseInt(searchParams?.page, 10) || 1;
+  const resolvedSearchParams = await searchParams;
+  const search = resolvedSearchParams?.search || '';
+  const status = resolvedSearchParams?.status || '';
+  const paymentStatus = resolvedSearchParams?.paymentStatus || '';
+  const page = parseInt(resolvedSearchParams?.page, 10) || 1;
 
   const ordersResult = await getOrders({ search, status, paymentStatus, page, limit: 20 });
 

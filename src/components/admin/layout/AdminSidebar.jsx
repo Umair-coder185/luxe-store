@@ -10,7 +10,6 @@ const NAV_ITEMS = [
   { href: '/admin/brands', label: 'Brands', icon: TagIcon },
   { href: '/admin/collections', label: 'Collections', icon: LayersIcon },
   { href: '/admin/orders', label: 'Orders', icon: ShoppingCartIcon },
-  { href: '/admin/coupons', label: 'Coupons', icon: TicketIcon },
 ];
 
 export default function AdminSidebar({ isOpen, onClose }) {

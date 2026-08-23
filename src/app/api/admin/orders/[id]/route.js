@@ -11,7 +11,8 @@ export async function GET(request, { params }) {
   }
 
   try {
-    const order = await getOrderById(params.id);
+    const resolvedParams = await params;
+    const order = await getOrderById(resolvedParams.id);
     if (!order) {
       return NextResponse.json({ error: 'Order not found' }, { status: 404 });
     }
@@ -43,7 +44,8 @@ export async function PATCH(request, { params }) {
     const { status, note } = validatedData.data;
 
     // Mutate
-    const result = await updateOrderStatus(params.id, { status, note });
+    const resolvedParams = await params;
+    const result = await updateOrderStatus(resolvedParams.id, { status, note });
     if (result.error) {
       return NextResponse.json({ error: result.error }, { status: result.status });
     }
