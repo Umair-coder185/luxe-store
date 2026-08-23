@@ -30,7 +30,7 @@
 //      - Development: false (localhost has no HTTPS)
 // ─────────────────────────────────────────────────────────────
 
-import { stringifyCookie as serialize, parseCookie as parse } from 'cookie';
+import { stringifySetCookie as serialize, parseCookie as parse } from 'cookie';
 import env from '@/config/env.js';
 import { COOKIES, COOKIE_CONFIG } from '@/constants/cookies.js';
 
@@ -84,8 +84,8 @@ export function getAuthCookieHeaders({ accessToken, refreshToken }) {
   });
 
   return [
-    serialize(COOKIES.ACCESS_TOKEN, accessToken, accessOptions),
-    serialize(COOKIES.REFRESH_TOKEN, refreshToken, refreshOptions),
+    serialize({ name: COOKIES.ACCESS_TOKEN, value: accessToken, ...accessOptions }),
+    serialize({ name: COOKIES.REFRESH_TOKEN, value: refreshToken, ...refreshOptions }),
   ];
 }
 
@@ -104,13 +104,17 @@ export function getAuthCookieHeaders({ accessToken, refreshToken }) {
  * @returns {string[]} Array of Set-Cookie header strings
  */
 export function getClearCookieHeaders() {
-  const accessClear = serialize(COOKIES.ACCESS_TOKEN, '', {
+  const accessClear = serialize({
+    name: COOKIES.ACCESS_TOKEN,
+    value: '',
     ...buildOptions(COOKIE_CONFIG.ACCESS),
     maxAge: 0,
     path: '/',                    // Must match the original path
   });
 
-  const refreshClear = serialize(COOKIES.REFRESH_TOKEN, '', {
+  const refreshClear = serialize({
+    name: COOKIES.REFRESH_TOKEN,
+    value: '',
     ...buildOptions(COOKIE_CONFIG.REFRESH),
     maxAge: 0,
     path: REFRESH_COOKIE_PATH,    // Must match the original path exactly

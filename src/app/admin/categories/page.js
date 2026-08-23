@@ -2,7 +2,7 @@ import { requireAdminSC } from '@/lib/auth/guards';
 import { getCategories } from '@/lib/queries/admin/categories';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
-import EntityTable, { StatusBadge } from '@/components/admin/shared/EntityTable';
+import CategoryTable from '@/components/admin/categories/CategoryTable';
 
 export const dynamic = 'force-dynamic';
 
@@ -15,17 +15,6 @@ export default async function CategoriesPage({ searchParams }) {
   const query = search || '';
 
   const { data, meta } = await getCategories({ page: currentPage, limit: 10, search: query });
-
-  const columns = [
-    { key: 'name', label: 'Name' },
-    { key: 'slug', label: 'Slug' },
-    {
-      key: 'parent',
-      label: 'Parent',
-      render: (v) => v ? v.name : 'â€”'
-    },
-    { key: 'isActive', label: 'Status', render: StatusBadge },
-  ];
 
   return (
     <div className="space-y-6">
@@ -42,12 +31,7 @@ export default async function CategoriesPage({ searchParams }) {
         </Link>
       </div>
 
-      <EntityTable
-        columns={columns}
-        data={data}
-        editBasePath="/admin/categories"
-        deleteEndpoint="/api/admin/categories"
-      />
+      <CategoryTable data={data} />
     </div>
   );
 }

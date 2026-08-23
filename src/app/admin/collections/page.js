@@ -2,7 +2,7 @@ import { requireAdminSC } from '@/lib/auth/guards';
 import { getCollections } from '@/lib/queries/admin/collections';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
-import EntityTable, { StatusBadge } from '@/components/admin/shared/EntityTable';
+import CollectionTable from '@/components/admin/collections/CollectionTable';
 
 export const dynamic = 'force-dynamic';
 
@@ -15,22 +15,6 @@ export default async function CollectionsPage({ searchParams }) {
   const query = search || '';
 
   const { data, meta } = await getCollections({ page: currentPage, limit: 10, search: query });
-
-  const columns = [
-    { key: 'name', label: 'Name' },
-    { key: 'slug', label: 'Slug' },
-    {
-      key: 'startDate',
-      label: 'Start Date',
-      render: (v) => v ? new Date(v).toLocaleDateString() : 'â€”'
-    },
-    {
-      key: 'endDate',
-      label: 'End Date',
-      render: (v) => v ? new Date(v).toLocaleDateString() : 'â€”'
-    },
-    { key: 'isActive', label: 'Status', render: StatusBadge },
-  ];
 
   return (
     <div className="space-y-6">
@@ -47,12 +31,7 @@ export default async function CollectionsPage({ searchParams }) {
         </Link>
       </div>
 
-      <EntityTable
-        columns={columns}
-        data={data}
-        editBasePath="/admin/collections"
-        deleteEndpoint="/api/admin/collections"
-      />
+      <CollectionTable data={data} />
     </div>
   );
 }

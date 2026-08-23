@@ -58,7 +58,7 @@ async function authenticate(accessToken) {
     return { user: null, error: 'Session revoked', status: 401 };
   }
 
-  if (!user.isActive) {
+  if (user.isActive === false) {
     return { user: null, error: 'Account suspended', status: 403 };
   }
 

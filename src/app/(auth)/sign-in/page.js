@@ -43,8 +43,15 @@ function SignInForm() {
         return;
       }
 
+      const { user } = await res.json();
       await refetchSession();
-      router.push(redirectTo);
+
+      if (user?.role === 'admin' && redirectTo === '/') {
+        router.push('/admin');
+      } else {
+        router.push(redirectTo);
+      }
+
       router.refresh();
     } catch {
       setError('Something went wrong. Please try again.');

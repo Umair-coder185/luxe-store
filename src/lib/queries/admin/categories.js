@@ -30,7 +30,9 @@ export async function getCategories({ page = 1, limit = 10, search = '' } = {}) 
     data: data.map(d => ({
       ...d,
       _id: d._id.toString(),
-      parent: d.parent ? { ...d.parent, _id: d.parent._id.toString() } : null
+      parent: d.parent ? { ...d.parent, _id: d.parent._id.toString() } : null,
+      createdAt: d.createdAt ? d.createdAt.toISOString() : null,
+      updatedAt: d.updatedAt ? d.updatedAt.toISOString() : null,
     })),
     total,
     page: Math.max(1, page),

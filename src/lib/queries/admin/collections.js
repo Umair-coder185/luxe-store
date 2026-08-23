@@ -31,6 +31,8 @@ export async function getCollections({ page = 1, limit = 10, search = '' } = {})
       _id: d._id.toString(),
       startDate: d.startDate ? d.startDate.toISOString() : null,
       endDate: d.endDate ? d.endDate.toISOString() : null,
+      createdAt: d.createdAt ? d.createdAt.toISOString() : null,
+      updatedAt: d.updatedAt ? d.updatedAt.toISOString() : null,
     })),
     total,
     page: Math.max(1, page),

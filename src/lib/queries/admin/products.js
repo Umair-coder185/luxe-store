@@ -3,6 +3,7 @@ import Product from '@/models/Product';
 import Brand from '@/models/Brand';
 import Category from '@/models/Category';
 import Collection from '@/models/Collection';
+import mongoose from 'mongoose';
 
 export async function getProducts(options = {}) {
   await dbConnect();
@@ -22,8 +23,8 @@ export async function getProducts(options = {}) {
     ];
   }
 
-  if (category) query.category = category;
-  if (brand) query.brand = brand;
+  if (category && mongoose.Types.ObjectId.isValid(category)) query.category = category;
+  if (brand && mongoose.Types.ObjectId.isValid(brand)) query.brand = brand;
   if (isActive !== undefined && isActive !== '') {
     query.isActive = isActive === 'true' || isActive === true;
   }
@@ -46,6 +47,14 @@ export async function getProducts(options = {}) {
       category: d.category ? { ...d.category, _id: d.category._id.toString() } : null,
       brand: d.brand ? { ...d.brand, _id: d.brand._id.toString() } : null,
       collections: (d.collections || []).map(c => c.toString()),
+      images: (d.images || []).map(img => ({
+        ...img,
+        _id: img._id ? img._id.toString() : undefined
+      })),
+      variants: (d.variants || []).map(v => ({
+        ...v,
+        _id: v._id ? v._id.toString() : undefined
+      })),
       createdAt: d.createdAt.toISOString(),
       updatedAt: d.updatedAt.toISOString(),
     })),
@@ -66,6 +75,14 @@ export async function getProduct(id) {
     category: product.category.toString(),
     brand: product.brand.toString(),
     collections: (product.collections || []).map(c => c.toString()),
+    images: (product.images || []).map(img => ({
+      ...img,
+      _id: img._id ? img._id.toString() : undefined
+    })),
+    variants: (product.variants || []).map(v => ({
+      ...v,
+      _id: v._id ? v._id.toString() : undefined
+    })),
     createdAt: product.createdAt.toISOString(),
     updatedAt: product.updatedAt.toISOString(),
   };

@@ -17,5 +17,10 @@ export default async function AdminLayout({ children }) {
     redirect(status === 403 ? '/' : '/sign-in');
   }
 
-  return <AdminNavigation user={user}>{children}</AdminNavigation>;
+  const navigationUser = {
+    firstName: user.firstName ?? '',
+    lastName: user.lastName ?? '',
+  };
+
+  return <AdminNavigation user={navigationUser}>{children}</AdminNavigation>;
 }
