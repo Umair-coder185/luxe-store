@@ -3,7 +3,7 @@ import { getProductBySlug } from "@/lib/queries/storefront/products";
 
 import ProductGallery from "@/components/storefront/product/ProductGallery";
 import ProductPrice from "@/components/storefront/product/ProductPrice";
-import ProductVariants from "@/components/storefront/product/ProductVariants";
+import ProductPurchaseActions from "@/components/storefront/product/ProductPurchaseActions";
 import ProductAttributes from "@/components/storefront/product/ProductAttributes";
 import RelatedProducts from "@/components/storefront/product/RelatedProducts";
 
@@ -74,8 +74,24 @@ export default async function ProductPage({ params }) {
             </div>
           )}
 
-          {/* Variants (Day 5 scope: Presentation only) */}
-          <ProductVariants variants={product.variants} />
+          {/* Purchase Actions (Day 6 Client Island) */}
+          <ProductPurchaseActions
+            product={{
+              id: String(product.id),
+              slug: product.slug,
+              name: product.name,
+              price: product.price,
+              availability: product.availability,
+              images: product.images?.length > 0 ? [{ url: product.images[0].url }] : [],
+              variants: (product.variants || []).map(v => ({
+                id: String(v.id),
+                sku: v.sku || null,
+                size: v.size || null,
+                color: v.color || null,
+                stock: v.stock || 0
+              }))
+            }}
+          />
 
           {/* Detailed Attributes */}
           <ProductAttributes attributes={product.attributes} />

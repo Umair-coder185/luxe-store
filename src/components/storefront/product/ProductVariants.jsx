@@ -1,19 +1,12 @@
-"use client";
-
-import { useState } from "react";
-
-export default function ProductVariants({ variants }) {
-  // Derive options based on the variants array
+export default function ProductVariants({ variants, selectedVariantId, onSelectVariant }) {
   const hasVariants = variants && variants.length > 0;
   
-  const [selectedVariantId, setSelectedVariantId] = useState(
-    hasVariants ? variants.find(v => v.stock > 0)?.id || null : null
-  );
-
   if (!hasVariants) return null;
 
   const handleVariantClick = (id) => {
-    setSelectedVariantId(id);
+    if (onSelectVariant) {
+      onSelectVariant(id);
+    }
   };
 
   const selectedVariant = variants.find(v => v.id === selectedVariantId);
@@ -35,8 +28,6 @@ export default function ProductVariants({ variants }) {
           const isSelected = selectedVariantId === variant.id;
           const isSoldOut = variant.stock <= 0;
 
-          // A simple label combining whatever attributes exist. (e.g. Size M, Color Black).
-          // Assuming variants have size and color as fields.
           const labelParts = [];
           if (variant.size) labelParts.push(variant.size);
           if (variant.color) labelParts.push(variant.color);
@@ -48,13 +39,14 @@ export default function ProductVariants({ variants }) {
               onClick={() => !isSoldOut && handleVariantClick(variant.id)}
               disabled={isSoldOut}
               aria-pressed={isSelected}
+              aria-label={`${label}${isSoldOut ? ', Sold out' : ''}`}
               className={`
                 px-4 py-2 text-sm border focus:outline-none focus:ring-2 focus:ring-neutral-900 transition-colors
                 ${isSelected 
                   ? "border-neutral-900 ring-1 ring-neutral-900" 
                   : "border-neutral-200 text-neutral-700 hover:border-neutral-400"
                 }
-                ${isSoldOut ? "opacity-50 line-through decoration-neutral-400" : ""}
+                ${isSoldOut ? "opacity-50 line-through decoration-neutral-400 cursor-not-allowed" : ""}
               `}
             >
               {label}
@@ -64,7 +56,7 @@ export default function ProductVariants({ variants }) {
       </div>
       
       {isSelectedSoldOut && (
-        <div className="mt-3 text-sm font-medium text-red-600">
+        <div className="mt-3 text-sm font-medium text-red-600" aria-live="polite">
           This option is currently sold out.
         </div>
       )}

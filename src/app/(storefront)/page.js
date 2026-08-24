@@ -9,18 +9,29 @@ export default async function StorefrontHomepage() {
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
-      <section className="relative h-[80vh] flex items-center justify-center bg-neutral-100">
-        <div className="text-center space-y-4 z-10 px-4">
-          <h1 className="text-5xl md:text-7xl font-light tracking-tight text-neutral-900">
+      <section className="relative h-[80vh] flex items-center justify-center bg-neutral-900 overflow-hidden">
+        {/* Background Image (User must place hero-interior.jpg in public/ folder) */}
+        <Image 
+          src="/hero-interior.jpg" 
+          alt="Luxury Store Interior" 
+          fill 
+          priority
+          className="object-cover object-center opacity-70"
+          sizes="100vw"
+        />
+        
+        {/* Content */}
+        <div className="text-center space-y-4 z-10 px-4 relative">
+          <h1 className="text-5xl md:text-7xl font-light tracking-tight text-white drop-shadow-md">
             Luxe Edit
           </h1>
-          <p className="text-lg md:text-xl text-neutral-600 max-w-lg mx-auto">
+          <p className="text-lg md:text-xl text-white/90 max-w-lg mx-auto drop-shadow-md">
             Discover the new season collection. Refined, effortless, and premium.
           </p>
-          <div className="pt-4">
+          <div className="pt-6">
             <Link
               href="/products"
-              className="inline-block px-8 py-3 bg-neutral-900 text-white hover:bg-neutral-800 transition-colors duration-200 text-sm font-medium tracking-wide"
+              className="inline-block px-10 py-3.5 bg-white text-neutral-900 hover:bg-neutral-100 transition-colors duration-200 text-sm font-medium tracking-wide shadow-lg"
             >
               Shop the Collection
             </Link>

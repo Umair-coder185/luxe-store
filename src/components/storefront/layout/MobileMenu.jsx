@@ -2,9 +2,16 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import CartWishlistNav from "./CartWishlistNav";
+import { topNavLinks } from "@/lib/config/navigation";
 
 export default function MobileMenu() {
   const [isOpen, setIsOpen] = useState(false);
+  const [expandedItems, setExpandedItems] = useState({});
+
+  const toggleExpand = (name) => {
+    setExpandedItems(prev => ({ ...prev, [name]: !prev[name] }));
+  };
 
   // Close on Escape key
   useEffect(() => {
@@ -66,17 +73,61 @@ export default function MobileMenu() {
               </button>
             </div>
             
-            <nav className="flex-1 overflow-y-auto py-6 px-4 space-y-6">
+            <nav className="flex-1 overflow-y-auto py-6 px-4 flex flex-col h-full">
               <div className="flex flex-col space-y-4">
-                <Link href="/new-arrivals" onClick={() => setIsOpen(false)} className="text-lg font-medium text-neutral-900 hover:text-neutral-600">
-                  New Arrivals
-                </Link>
-                <Link href="/products" onClick={() => setIsOpen(false)} className="text-lg font-medium text-neutral-900 hover:text-neutral-600">
-                  Products
-                </Link>
-                <Link href="/search" onClick={() => setIsOpen(false)} className="text-lg font-medium text-neutral-900 hover:text-neutral-600">
-                  Search
-                </Link>
+                {topNavLinks.map((link) => (
+                  <div key={link.name} className="flex flex-col border-b border-neutral-100 pb-2">
+                    {link.hasDropdown ? (
+                      <div>
+                        <button 
+                          onClick={() => toggleExpand(link.name)}
+                          className="flex justify-between items-center w-full text-lg font-medium text-neutral-900 py-2 text-left"
+                        >
+                          {link.name}
+                          <svg 
+                            width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"
+                            className={`transform transition-transform ${expandedItems[link.name] ? 'rotate-180' : ''}`}
+                          >
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                          </svg>
+                        </button>
+                        {expandedItems[link.name] && (
+                          <div className="flex flex-col pl-4 mt-2 space-y-4 mb-2">
+                            {link.megaMenu?.map((column, idx) => (
+                              <div key={idx} className="flex flex-col space-y-2">
+                                <span className="text-xs font-bold tracking-widest text-neutral-500 uppercase">
+                                  {column.title}
+                                </span>
+                                {column.items.map((item, itemIdx) => (
+                                  <Link 
+                                    key={itemIdx} 
+                                    href={item.href}
+                                    onClick={() => setIsOpen(false)}
+                                    className={`text-sm text-neutral-600 py-1 ${item.name.includes('>') ? 'font-medium text-neutral-900' : ''}`}
+                                  >
+                                    {item.name}
+                                  </Link>
+                                ))}
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <Link 
+                        href={link.href} 
+                        onClick={() => setIsOpen(false)} 
+                        className="text-lg font-medium text-neutral-900 py-2 hover:text-neutral-600"
+                      >
+                        {link.name}
+                      </Link>
+                    )}
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-8 pt-8 border-t border-neutral-100 flex flex-col space-y-4">
+                <CartWishlistNav isMobile={true} onClick={() => setIsOpen(false)} />
               </div>
             </nav>
           </div>
