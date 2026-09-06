@@ -3,9 +3,8 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import CartWishlistNav from "./CartWishlistNav";
-import { topNavLinks } from "@/lib/config/navigation";
 
-export default function MobileMenu() {
+export default function MobileMenu({ navLinks = [] }) {
   const [isOpen, setIsOpen] = useState(false);
   const [expandedItems, setExpandedItems] = useState({});
 
@@ -75,8 +74,8 @@ export default function MobileMenu() {
             
             <nav className="flex-1 overflow-y-auto py-6 px-4 flex flex-col h-full">
               <div className="flex flex-col space-y-4">
-                {topNavLinks.map((link) => (
-                  <div key={link.name} className="flex flex-col border-b border-neutral-100 pb-2">
+                {navLinks.map((link) => (
+                  <div key={link.id || link.name} className="flex flex-col border-b border-neutral-100 pb-2">
                     {link.hasDropdown ? (
                       <div>
                         <button 

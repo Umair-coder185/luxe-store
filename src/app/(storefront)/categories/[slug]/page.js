@@ -47,7 +47,7 @@ export default async function CategoryPage({ params, searchParams }) {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
       {/* Entity Header */}
       <div className="mb-12 text-center max-w-3xl mx-auto">
-        <h1 className="text-4xl font-light tracking-tight text-neutral-900 mb-4">{category.name}</h1>
+        <h1 className="text-4xl font-bold tracking-tight text-black mb-4">{category.name}</h1>
         {category.description && (
           <p className="text-neutral-600 leading-relaxed">{category.description}</p>
         )}

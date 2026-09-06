@@ -2,9 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { topNavLinks } from "@/lib/config/navigation";
 
-export default function DesktopNav() {
+export default function DesktopNav({ navLinks = [] }) {
   const [activeMenu, setActiveMenu] = useState(null);
 
   const handleMouseEnter = (name) => {
@@ -17,15 +16,15 @@ export default function DesktopNav() {
 
   return (
     <nav className="hidden lg:flex space-x-6 h-full" onMouseLeave={handleMouseLeave}>
-      {topNavLinks.map((link) => (
+      {navLinks.map((link) => (
         <div 
-          key={link.name} 
+          key={link.id || link.name}
           className="flex h-full"
           onMouseEnter={() => handleMouseEnter(link.name)}
         >
           <Link
             href={link.href}
-            className="flex items-center text-xs font-medium tracking-widest text-neutral-300 hover:text-white transition-colors uppercase h-full py-5"
+            className="flex items-center text-sm font-semibold tracking-widest text-white hover:text-gray-200 transition-colors uppercase h-full py-5"
           >
             {link.name}
           </Link>

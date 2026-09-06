@@ -2,27 +2,36 @@ import Link from "next/link";
 import MobileMenu from "./MobileMenu";
 import CartWishlistNav from "./CartWishlistNav";
 import DesktopNav from "./DesktopNav";
+import { getStorefrontNavigation } from "@/lib/queries/storefront/navigation";
 
-export default function Navbar() {
+export default async function Navbar() {
+  // Gracefully fallback to empty array if database fails to connect/query during setup
+  let navLinks = [];
+  try {
+    navLinks = await getStorefrontNavigation();
+  } catch (error) {
+    console.error("Failed to load storefront navigation:", error);
+  }
+
   return (
     <header className="sticky top-0 z-40 w-full bg-[#1c1c1c] border-b border-[#333]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16 relative">
           {/* Mobile Menu */}
           <div className="flex-1 flex items-center lg:hidden">
-            <MobileMenu />
+            <MobileMenu navLinks={navLinks} />
           </div>
 
           {/* Logo */}
           <div className="flex-shrink-0 flex items-center justify-center lg:justify-start lg:w-48">
-            <Link href="/" className="text-2xl font-serif tracking-widest bg-gradient-to-r from-[#e6c875] via-[#f9e596] to-[#b38b36] text-transparent bg-clip-text">
+            <Link href="/" className="text-3xl font-serif tracking-widest bg-gradient-to-r from-[#e6c875] via-[#f9e596] to-[#b38b36] text-transparent bg-clip-text">
               Depra Shop
             </Link>
           </div>
 
           {/* Desktop Navigation */}
           <div className="hidden lg:flex flex-1 justify-center h-full">
-            <DesktopNav />
+            <DesktopNav navLinks={navLinks} />
           </div>
 
           {/* Actions */}

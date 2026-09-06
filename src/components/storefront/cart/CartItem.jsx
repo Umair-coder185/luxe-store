@@ -61,7 +61,24 @@ export default function CartItem({ item, onUpdateQuantity, onRemove }) {
             </div>
             <p className="text-base font-medium text-neutral-900">{formattedSubtotal}</p>
           </div>
-          <p className="mt-1 text-sm text-neutral-500">{formattedPrice} each</p>
+          
+          <div className="mt-1 flex items-center space-x-2">
+            <p className="text-sm text-neutral-900 font-medium">{formattedPrice} each</p>
+            {item.hasPromotion && item.basePrice > item.price && (
+              <p className="text-xs text-neutral-400 line-through">
+                {new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(item.basePrice)}
+              </p>
+            )}
+          </div>
+          
+          {item.hasPromotion && item.promotion?.name && (
+            <p className="mt-0.5 text-xs text-green-700 font-medium uppercase tracking-wide">
+              {item.promotion.discountType === 'PERCENTAGE' 
+                ? `${item.promotion.discountValue}% OFF - ` 
+                : 'SALE - '}
+              {item.promotion.name}
+            </p>
+          )}
         </div>
 
         {/* Actions */}

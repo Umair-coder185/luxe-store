@@ -7,12 +7,13 @@ import Category from "../src/models/Category.js";
 import Product from "../src/models/Product.js";
 import User from "../src/models/User.js";
 import Order from "../src/models/Order.js";
+import Brand from "../src/models/Brand.js";
 
 const MONGODB_URI = process.env.MONGODB_URI;
 
 const CATEGORY_TREE = [
-  { name: "Men", children: ["Shirts", "T-Shirts", "Jeans", "Shoes"] },
-  { name: "Women", children: ["Dresses", "Tops", "Jeans", "Shoes"] },
+  { name: "Men", children: ["Shirts", "T-Shirts", "Jeans", "Shoes", "Handbags"] },
+  { name: "Women", children: ["Dresses", "Tops", "Jeans", "Shoes", "Handbags"] },
 ];
 
 const BRANDS = ["Urbano", "Nordic Fit", "Coastal", "Ironline", "Wildmark"];
@@ -24,6 +25,7 @@ const CURATED_NAMES = {
   Jeans: ["Slim Fit Dark Wash Jeans", "Straight Leg Stretch Denim"],
   Dresses: ["Wrap Midi Dress", "Sleeveless Summer Dress"],
   Shoes: ["Everyday Leather Sneakers", "Classic Canvas Low-Tops"],
+  Handbags: ["Quilted Leather Crossbody Bag", "Monogram Canvas Tote", "Leather Top-Handle Satchel", "Leather Briefcase", "Canvas Messenger Bag"],
 };
 
 async function seed() {
@@ -35,6 +37,7 @@ async function seed() {
     Category.deleteMany({}),
     Product.deleteMany({}),
     Order.deleteMany({}),
+    Brand.deleteMany({}),
     User.deleteMany({ email: /@seed\.test$/ }),
   ]);
   console.log("Cleared previous seed data");
@@ -62,9 +65,21 @@ async function seed() {
 
   const leafCategories = categoryDocs.filter((c) => c.parent !== null);
 
+  // 2.5 CREATE Brands
+  const brandDocs = [];
+  for (const brandName of BRANDS) {
+    const brand = await Brand.create({
+      name: brandName,
+      slug: brandName.toLowerCase().replace(/\s+/g, "-"),
+      description: `Description for ${brandName}`,
+    });
+    brandDocs.push(brand);
+  }
+  console.log(`Created ${brandDocs.length} brands`);
+
   // 3. BUILD product objects in memory first
   const products = [];
-  const PRODUCTS_PER_CATEGORY = 5;
+  const PRODUCTS_PER_CATEGORY = 10;
 
   for (const category of leafCategories) {
     const curatedForThisCategory = CURATED_NAMES[category.name] || [];
@@ -78,7 +93,7 @@ async function seed() {
       const price = faker.number.int({ min: 15, max: 120 });
       const hasDiscount = faker.datatype.boolean();
 
-      products.push({
+      products.push({ 
         name,
         slug: faker.helpers.slugify(`${name}-${faker.string.alphanumeric(5)}`).toLowerCase(),
         description: faker.commerce.productDescription(),
@@ -91,7 +106,7 @@ async function seed() {
           },
         ],
         category: category._id,
-        brand: faker.helpers.arrayElement(BRANDS),
+        brand: faker.helpers.arrayElement(brandDocs)._id,
         stock: faker.number.int({ min: 0, max: 100 }),
         salesCount: faker.number.int({ min: 0, max: 500 }),
         isActive: true,
@@ -106,18 +121,20 @@ async function seed() {
   // 4. Create test user — .save() is required here (not insertMany) so the
   //    pre('save') hashing hook actually fires. See Step 3 notes.
   const testUser = new User({
-    name: "Test User",
+    firstName: "Test",
+    lastName: "User",
     email: "testuser@seed.test",
-    passwordHash: "Password123!",
+    password: "Password123!",
     addresses: [
       {
-        label: "Home",
-        fullName: "Test User",
+        label: "home",
+        firstName: "Test",
+        lastName: "User",
         phone: "0300-1234567",
-        street: "123 Main Boulevard",
+        address: "123 Main Boulevard",
         city: "Lahore",
-        state: "Punjab",
-        zip: "54000",
+        province: "Punjab",
+        postalCode: "54000",
         country: "Pakistan",
         isDefault: true,
       },
@@ -130,8 +147,16 @@ async function seed() {
   //    Built the same way checkout will build them: snapshot items, computed
   //    totals, initial statusHistory entry. This is what makes "My Orders"
   //    and the admin queue testable without placing a real order first.
-  const shippingAddress = testUser.addresses[0].toObject();
-  delete shippingAddress._id;
+  const userAddress = testUser.addresses[0];
+  const shippingAddress = {
+    fullName: `${userAddress.firstName} ${userAddress.lastName}`.trim(),
+    phone: userAddress.phone,
+    street: userAddress.address,
+    city: userAddress.city,
+    state: userAddress.province,
+    zip: userAddress.postalCode,
+    country: userAddress.country,
+  };
 
   const ORDER_STATUSES = ["pending", "processing", "shipped", "delivered"];
   const orders = [];

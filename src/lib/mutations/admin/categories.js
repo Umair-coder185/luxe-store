@@ -68,6 +68,13 @@ export async function deleteCategory(id) {
     throw new Error(`Cannot delete category. ${childCount} child categor(ies) depend on it.`);
   }
 
+  // Delete protection 3: Check if Navigation references it
+  const NavigationMenu = (await import('@/models/NavigationMenu')).default;
+  const navCount = await NavigationMenu.countDocuments({ "sections.category": id });
+  if (navCount > 0) {
+    throw new Error(`Cannot delete category. It is referenced by a Storefront Navigation Menu.`);
+  }
+
   await Category.findByIdAndDelete(id);
   revalidateTag(CACHE_TAGS.CATEGORIES);
   return { success: true };

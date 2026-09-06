@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { getHomepageData } from "@/lib/queries/storefront/home";
 import ProductGrid from "@/components/storefront/catalog/ProductGrid";
+import { mockHandbags } from "@/lib/mockData";
 
 export default async function StorefrontHomepage() {
   const { newArrivals, categories, collections } = await getHomepageData();
@@ -42,7 +43,7 @@ export default async function StorefrontHomepage() {
       {/* Shop by Category */}
       {categories && categories.length > 0 && (
         <section className="py-24 px-4 md:px-8 max-w-7xl mx-auto w-full">
-          <h2 className="text-2xl font-light mb-12 text-center tracking-wide">
+          <h2 className="text-2xl font-bold text-black mb-12 text-center tracking-wide">
             Shop by Category
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -81,7 +82,7 @@ export default async function StorefrontHomepage() {
       {collections && collections.length > 0 && (
         <section className="py-24 px-4 md:px-8 bg-neutral-50">
           <div className="max-w-7xl mx-auto w-full">
-            <h2 className="text-2xl font-light mb-12 text-center tracking-wide">
+            <h2 className="text-2xl font-bold text-black mb-12 text-center tracking-wide">
               Current Collections
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -123,7 +124,7 @@ export default async function StorefrontHomepage() {
       {newArrivals && newArrivals.length > 0 && (
         <section className="py-24 px-4 md:px-8 max-w-7xl mx-auto w-full">
           <div className="flex items-center justify-between mb-12">
-            <h2 className="text-2xl font-light tracking-wide">New Arrivals</h2>
+            <h2 className="text-2xl font-bold text-black tracking-wide">New Arrivals</h2>
             <Link href="/new-arrivals" className="text-sm font-medium text-neutral-500 hover:text-neutral-900 border-b border-transparent hover:border-neutral-900 transition-all">
               View All
             </Link>
@@ -131,6 +132,17 @@ export default async function StorefrontHomepage() {
           <ProductGrid products={newArrivals} />
         </section>
       )}
+
+      {/* Handbags */}
+      <section className="pb-24 px-4 md:px-8 max-w-7xl mx-auto w-full">
+        <div className="flex items-center justify-between mb-12">
+          <h2 className="text-2xl font-bold text-black tracking-wide">Handbags</h2>
+          <Link href="/categories/handbags" className="text-sm font-medium text-neutral-500 hover:text-neutral-900 border-b border-transparent hover:border-neutral-900 transition-all">
+            Shop Handbags
+          </Link>
+        </div>
+        <ProductGrid products={mockHandbags} />
+      </section>
     </div>
   );
 }

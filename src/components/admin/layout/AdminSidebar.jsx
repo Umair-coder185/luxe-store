@@ -5,6 +5,8 @@ import { usePathname } from 'next/navigation';
 
 const NAV_ITEMS = [
   { href: '/admin', label: 'Dashboard', icon: DashboardIcon },
+  { href: '/admin/navigation', label: 'Navigation', icon: MapIcon },
+  { href: '/admin/promotions', label: 'Promotions', icon: TicketIcon },
   { href: '/admin/products', label: 'Products', icon: PackageIcon },
   { href: '/admin/categories', label: 'Categories', icon: FolderIcon },
   { href: '/admin/brands', label: 'Brands', icon: TagIcon },
@@ -82,6 +84,16 @@ function DashboardIcon(props) {
       <rect x="14" y="3" width="7" height="7" rx="1" />
       <rect x="3" y="14" width="7" height="7" rx="1" />
       <rect x="14" y="14" width="7" height="7" rx="1" />
+    </svg>
+  );
+}
+
+function MapIcon(props) {
+  return (
+    <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
+      <polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"></polygon>
+      <line x1="9" y1="3" x2="9" y2="18"></line>
+      <line x1="15" y1="6" x2="15" y2="21"></line>
     </svg>
   );
 }

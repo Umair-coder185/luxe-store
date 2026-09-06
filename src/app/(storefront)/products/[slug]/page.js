@@ -52,7 +52,7 @@ export default async function ProductPage({ params }) {
             )}
             <h1 className="text-3xl font-light tracking-tight text-neutral-900">{product.name}</h1>
             
-            <ProductPrice price={product.price} compareAtPrice={product.compareAtPrice} />
+            <ProductPrice price={product.price} compareAtPrice={product.compareAtPrice} pricing={product.pricing} />
           </div>
 
           <div className="mb-8">
@@ -81,6 +81,7 @@ export default async function ProductPage({ params }) {
               slug: product.slug,
               name: product.name,
               price: product.price,
+              pricing: product.pricing, // Added pricing for future cart integration (Prompt 4)
               availability: product.availability,
               images: product.images?.length > 0 ? [{ url: product.images[0].url }] : [],
               variants: (product.variants || []).map(v => ({

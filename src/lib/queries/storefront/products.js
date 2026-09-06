@@ -3,6 +3,7 @@ import Product from "@/models/Product";
 import Category from "@/models/Category";
 import Brand from "@/models/Brand";
 import Collection from "@/models/Collection";
+import { resolvePricingForProducts, resolvePricingForSingleProduct } from "@/lib/pricing/resolveProductPricing";
 
 export function serializeProductCard(doc) {
   if (!doc) return null;
@@ -10,8 +11,9 @@ export function serializeProductCard(doc) {
     id: doc._id.toString(),
     name: doc.name,
     slug: doc.slug,
-    price: doc.price,
+    price: doc.price, // Legacy price, left for fallback/reference
     compareAtPrice: doc.compareAtPrice || null,
+    pricing: doc.pricing || null, // Injected by resolvePricingForProducts
     image: doc.images && doc.images.length > 0 ? { url: doc.images[0].url } : null,
     brand: doc.brand && doc.brand.name ? { name: doc.brand.name, slug: doc.brand.slug } : null,
     stock: doc.stock,
@@ -26,8 +28,9 @@ export function serializeProductDetail(doc) {
     name: doc.name,
     slug: doc.slug,
     description: doc.description,
-    price: doc.price,
+    price: doc.price, // Legacy price
     compareAtPrice: doc.compareAtPrice || null,
+    pricing: doc.pricing || null, // Injected by resolvePricingForSingleProduct
     images: (doc.images || []).map(img => ({ url: img.url })),
     brand: doc.brand && doc.brand.name ? { name: doc.brand.name, slug: doc.brand.slug } : null,
     category: doc.category && doc.category.name ? { name: doc.category.name, slug: doc.category.slug } : null,
@@ -104,13 +107,15 @@ export async function getProducts(params) {
       .skip(skip)
       .limit(params.limit)
       .populate("brand", "name slug")
-      .select("name slug price compareAtPrice images brand stock isActive createdAt")
+      .select("name slug price compareAtPrice images brand category collections stock isActive createdAt")
       .lean(),
     Product.countDocuments(filter)
   ]);
   
+  const pricedDocs = await resolvePricingForProducts(docs);
+  
   return {
-    products: docs.map(serializeProductCard),
+    products: pricedDocs.map(serializeProductCard),
     pagination: {
       page: params.page,
       limit: params.limit,
@@ -132,7 +137,10 @@ export async function getProductBySlug(slug) {
     .populate("collections", "name slug")
     .lean();
     
-  return serializeProductDetail(doc);
+  if (!doc) return null;
+  
+  const pricedDoc = await resolvePricingForSingleProduct(doc);
+  return serializeProductDetail(pricedDoc);
 }
 
 export async function getNewArrivals(limit = 8) {
@@ -142,10 +150,11 @@ export async function getNewArrivals(limit = 8) {
     .sort({ createdAt: -1 })
     .limit(Math.min(limit, 24))
     .populate("brand", "name slug")
-    .select("name slug price compareAtPrice images brand stock isActive createdAt")
+    .select("name slug price compareAtPrice images brand category collections stock isActive createdAt")
     .lean();
     
-  return docs.map(serializeProductCard);
+  const pricedDocs = await resolvePricingForProducts(docs);
+  return pricedDocs.map(serializeProductCard);
 }
 
 export async function getRelatedProducts({ currentProductId, categorySlug, limit = 4 }) {
@@ -169,7 +178,7 @@ export async function getRelatedProducts({ currentProductId, categorySlug, limit
     .sort({ createdAt: -1 }) // Sort by newest since salesCount is not maintained yet
     .limit(Math.min(limit, 12))
     .populate("brand", "name slug")
-    .select("name slug price compareAtPrice images brand stock isActive createdAt")
+    .select("name slug price compareAtPrice images brand category collections stock isActive createdAt")
     .lean();
     
   // If we didn't find enough in the same category, backfill with general products
@@ -181,11 +190,13 @@ export async function getRelatedProducts({ currentProductId, categorySlug, limit
       .sort({ createdAt: -1 })
       .limit(limit - docs.length)
       .populate("brand", "name slug")
-      .select("name slug price compareAtPrice images brand stock isActive createdAt")
+      .select("name slug price compareAtPrice images brand category collections stock isActive createdAt")
       .lean();
       
-    return [...docs, ...additionalDocs].map(serializeProductCard);
+    const pricedDocs = await resolvePricingForProducts([...docs, ...additionalDocs]);
+    return pricedDocs.map(serializeProductCard);
   }
     
-  return docs.map(serializeProductCard);
+  const pricedDocs = await resolvePricingForProducts(docs);
+  return pricedDocs.map(serializeProductCard);
 }

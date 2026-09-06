@@ -17,7 +17,7 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 import crypto from 'node:crypto';
-import { VALID_ROLES } from '@/constants/roles.js';
+import { VALID_ROLES } from '../constants/roles.js';
 
 // ── Schema Definition ────────────────────────────────────────
 
@@ -240,13 +240,13 @@ userSchema.virtual('fullName').get(function () {
  * If the value already looks like a hash, we skip re-hashing
  * (prevents double-hashing when admin updates user via seed/script).
  */
-userSchema.pre('save', async function (next) {
+userSchema.pre('save', async function () {
   // Only hash if password is modified
-  if (!this.isModified('password')) return next();
+  if (!this.isModified('password')) return;
 
   // Skip if already a bcrypt hash (protects seed scripts & tests)
   if (this.password && /^\$2[ab]\$\d{2}\$/.test(this.password)) {
-    return next();
+    return;
   }
 
   try {
@@ -254,9 +254,8 @@ userSchema.pre('save', async function (next) {
     // Dynamic import was unnecessary overhead on every save/compare.
     const salt = await bcrypt.genSalt(12);
     this.password = await bcrypt.hash(this.password, salt);
-    next();
   } catch (error) {
-    next(error);
+    throw error;
   }
 });
 
