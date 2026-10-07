@@ -23,10 +23,10 @@ export default async function StorefrontHomepage() {
         
         {/* Content */}
         <div className="text-center space-y-4 z-10 px-4 relative">
-          <h1 className="text-5xl md:text-7xl font-light tracking-tight text-white drop-shadow-md">
+          <h1 className="text-7xl md:text-9xl font-logo tracking-wide text-[#d4af37] drop-shadow-2xl">
             Luxe Edit
           </h1>
-          <p className="text-lg md:text-xl text-white/90 max-w-lg mx-auto drop-shadow-md">
+          <p className="text-lg md:text-xl font-light text-white/90 max-w-lg mx-auto drop-shadow-md">
             Discover the new season collection. Refined, effortless, and premium.
           </p>
           <div className="pt-6">
@@ -43,37 +43,43 @@ export default async function StorefrontHomepage() {
       {/* Shop by Category */}
       {categories && categories.length > 0 && (
         <section className="py-24 px-4 md:px-8 max-w-7xl mx-auto w-full">
-          <h2 className="text-2xl font-bold text-black mb-12 text-center tracking-wide">
+          <h2 className="text-3xl md:text-4xl font-heading font-bold text-neutral-900 mb-12 text-center tracking-widest uppercase">
             Shop by Category
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {categories.map((cat) => (
-              <Link 
-                href={`/categories/${cat.slug}`} 
-                key={cat.id} 
-                className="group block relative aspect-[3/4] bg-neutral-50 flex items-center justify-center overflow-hidden"
-              >
-                {cat.image && cat.image.url ? (
+            {categories.map((cat, index) => {
+              const fallbackImages = [
+                "https://images.unsplash.com/photo-1584916201218-f4242ceb4809?q=80&w=1000",
+                "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?q=80&w=1000",
+                "https://images.unsplash.com/photo-1608228079968-c7681eaef81a?q=80&w=1000",
+                "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?q=80&w=1000",
+                "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=1000",
+                "https://images.unsplash.com/photo-1523170335258-f5ed11844a49?q=80&w=1000"
+              ];
+              const imageUrl = (cat.image && cat.image.url) ? cat.image.url : fallbackImages[index % fallbackImages.length];
+
+              return (
+                <Link 
+                  href={`/categories/${cat.slug}`} 
+                  key={cat.id} 
+                  className="group block relative aspect-[3/4] bg-neutral-50 flex items-center justify-center overflow-hidden"
+                >
                   <Image 
-                    src={cat.image.url} 
+                    src={imageUrl} 
                     alt={cat.name} 
                     fill 
                     className="object-cover transition-transform duration-700 group-hover:scale-105" 
                     sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                   />
-                ) : (
-                  <div className="absolute inset-0 bg-neutral-100 flex items-center justify-center">
-                    <span className="text-neutral-300">No Image</span>
+                  <div className="absolute inset-0 bg-black/10 transition-opacity duration-500 group-hover:bg-black/30" />
+                  <div className="absolute bottom-8 left-0 right-0 text-center">
+                    <span className="inline-block bg-white/90 backdrop-blur-sm px-8 py-3 text-neutral-900 tracking-widest text-xs uppercase font-semibold shadow-xl group-hover:bg-white transition-colors">
+                      {cat.name}
+                    </span>
                   </div>
-                )}
-                <div className="absolute inset-0 bg-black/10 transition-opacity group-hover:bg-black/0" />
-                <div className="absolute bottom-8 left-0 right-0 text-center">
-                  <span className="inline-block bg-white/90 backdrop-blur-sm px-6 py-2 text-neutral-900 tracking-wider text-sm font-medium">
-                    {cat.name}
-                  </span>
-                </div>
-              </Link>
-            ))}
+                </Link>
+              );
+            })}
           </div>
         </section>
       )}
@@ -82,7 +88,7 @@ export default async function StorefrontHomepage() {
       {collections && collections.length > 0 && (
         <section className="py-24 px-4 md:px-8 bg-neutral-50">
           <div className="max-w-7xl mx-auto w-full">
-            <h2 className="text-2xl font-bold text-black mb-12 text-center tracking-wide">
+            <h2 className="text-3xl md:text-4xl font-heading font-bold text-neutral-900 mb-12 text-center tracking-widest uppercase">
               Current Collections
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -103,7 +109,7 @@ export default async function StorefrontHomepage() {
                   )}
                   <div className="absolute inset-0 bg-black/20" />
                   <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-6 text-white">
-                    <h3 className="text-3xl font-light tracking-tight mb-2">{collection.name}</h3>
+                    <h3 className="text-5xl font-logo tracking-normal mb-2 drop-shadow-md">{collection.name}</h3>
                     {collection.description && (
                       <p className="max-w-md text-white/90 text-sm hidden md:block">
                         {collection.description}
@@ -124,7 +130,7 @@ export default async function StorefrontHomepage() {
       {newArrivals && newArrivals.length > 0 && (
         <section className="py-24 px-4 md:px-8 max-w-7xl mx-auto w-full">
           <div className="flex items-center justify-between mb-12">
-            <h2 className="text-2xl font-bold text-black tracking-wide">New Arrivals</h2>
+            <h2 className="text-3xl md:text-4xl font-heading font-bold text-neutral-900 tracking-widest uppercase">New Arrivals</h2>
             <Link href="/new-arrivals" className="text-sm font-medium text-neutral-500 hover:text-neutral-900 border-b border-transparent hover:border-neutral-900 transition-all">
               View All
             </Link>
@@ -136,7 +142,7 @@ export default async function StorefrontHomepage() {
       {/* Handbags */}
       <section className="pb-24 px-4 md:px-8 max-w-7xl mx-auto w-full">
         <div className="flex items-center justify-between mb-12">
-          <h2 className="text-2xl font-bold text-black tracking-wide">Handbags</h2>
+          <h2 className="text-3xl md:text-4xl font-heading font-bold text-neutral-900 tracking-widest uppercase">Handbags</h2>
           <Link href="/categories/handbags" className="text-sm font-medium text-neutral-500 hover:text-neutral-900 border-b border-transparent hover:border-neutral-900 transition-all">
             Shop Handbags
           </Link>

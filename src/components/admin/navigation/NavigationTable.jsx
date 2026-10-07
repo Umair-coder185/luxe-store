@@ -23,62 +23,60 @@ export default function NavigationTable({ data }) {
   }
 
   return (
-    <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
-      <div className="overflow-x-auto">
-        <table className="w-full text-sm text-left">
-          <thead className="bg-gray-50 border-b border-gray-200 text-gray-500 font-medium">
+    <div className="overflow-x-auto rounded-2xl bg-white shadow-sm border border-slate-200">
+      <table className="w-full text-sm text-left border-collapse">
+        <thead className="bg-slate-50/80 border-b border-slate-200">
+          <tr>
+            <th className="px-6 py-4 font-semibold text-slate-600 tracking-wider text-xs uppercase">Order</th>
+            <th className="px-6 py-4 font-semibold text-slate-600 tracking-wider text-xs uppercase">Label</th>
+            <th className="px-6 py-4 font-semibold text-slate-600 tracking-wider text-xs uppercase">Type</th>
+            <th className="px-6 py-4 font-semibold text-slate-600 tracking-wider text-xs uppercase">Status</th>
+            <th className="px-6 py-4 font-semibold text-slate-600 tracking-wider text-xs uppercase text-right">Actions</th>
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-slate-100">
+          {data.length === 0 ? (
             <tr>
-              <th className="px-6 py-4">Order</th>
-              <th className="px-6 py-4">Label</th>
-              <th className="px-6 py-4">Type</th>
-              <th className="px-6 py-4">Status</th>
-              <th className="px-6 py-4 text-right">Actions</th>
+              <td colSpan="5" className="px-6 py-8 text-center text-slate-500 font-medium">
+                No navigation items found.
+              </td>
             </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-200">
-            {data.length === 0 ? (
-              <tr>
-                <td colSpan="5" className="px-6 py-8 text-center text-gray-500">
-                  No navigation items found.
+          ) : (
+            data.map((item) => (
+              <tr key={item._id} className="hover:bg-slate-50/80 transition-colors duration-200 group">
+                <td className="px-6 py-4 text-slate-500 font-medium">{item.order}</td>
+                <td className="px-6 py-4 font-medium text-slate-700">{item.label}</td>
+                <td className="px-6 py-4">
+                  <span className="inline-flex items-center px-3 py-1 rounded-md text-[10px] font-bold tracking-wider uppercase bg-slate-100 text-slate-600 border border-slate-200 shadow-sm">
+                    {item.type}
+                  </span>
+                </td>
+                <td className="px-6 py-4">
+                  <span className={`inline-flex px-3 py-1 rounded-full text-xs font-bold tracking-wide uppercase shadow-sm border ${item.isVisible ? 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20' : 'bg-slate-100 text-slate-500 border-slate-200'}`}>
+                    {item.isVisible ? 'Visible' : 'Hidden'}
+                  </span>
+                </td>
+                <td className="px-6 py-4 text-right whitespace-nowrap">
+                  <div className="flex items-center justify-end gap-4">
+                    <Link
+                      href={`/admin/navigation/${item._id}/edit`}
+                      className="text-indigo-500 font-semibold hover:text-indigo-700 transition-colors"
+                    >
+                      Edit
+                    </Link>
+                    <button
+                      onClick={() => handleDelete(item._id)}
+                      className="text-rose-500 font-semibold hover:text-rose-700 transition-colors"
+                    >
+                      Delete
+                    </button>
+                  </div>
                 </td>
               </tr>
-            ) : (
-              data.map((item) => (
-                <tr key={item._id} className="hover:bg-gray-50/50 transition-colors">
-                  <td className="px-6 py-4 text-gray-500">{item.order}</td>
-                  <td className="px-6 py-4 font-medium text-gray-900">{item.label}</td>
-                  <td className="px-6 py-4">
-                    <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-gray-100 text-gray-700">
-                      {item.type}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${item.isVisible ? 'bg-green-50 text-green-700' : 'bg-gray-100 text-gray-700'}`}>
-                      {item.isVisible ? 'Visible' : 'Hidden'}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    <div className="flex items-center justify-end gap-3">
-                      <Link
-                        href={`/admin/navigation/${item._id}/edit`}
-                        className="text-sm font-medium text-blue-600 hover:text-blue-800 transition-colors"
-                      >
-                        Edit
-                      </Link>
-                      <button
-                        onClick={() => handleDelete(item._id)}
-                        className="text-sm font-medium text-red-600 hover:text-red-800 transition-colors"
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
+            ))
+          )}
+        </tbody>
+      </table>
     </div>
   );
 }

@@ -23,14 +23,14 @@ export default async function OrdersPage({ searchParams }) {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-semibold text-gray-900">Orders</h1>
+          <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Orders</h1>
           <p className="text-sm text-gray-500 mt-1">
             Manage your store&apos;s orders and fulfillment.
           </p>
         </div>
       </div>
 
-      <div className="flex flex-col sm:flex-row gap-4 items-center justify-between bg-white p-4 rounded-lg border border-gray-200">
+      <div className="flex flex-col sm:flex-row gap-4 items-center justify-between bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
         <form method="GET" action="/admin/orders" className="flex flex-1 flex-col sm:flex-row gap-4 w-full">
           <div className="flex-1">
             <input
@@ -38,15 +38,15 @@ export default async function OrdersPage({ searchParams }) {
               name="search"
               defaultValue={search}
               placeholder="Search by order number..."
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-900"
+              className="w-full rounded-xl border border-slate-300 px-4 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all"
             />
           </div>
           
-          <div className="flex gap-4">
+          <div className="flex gap-3">
             <select
               name="status"
               defaultValue={status}
-              className="rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-900"
+              className="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 bg-white cursor-pointer"
             >
               <option value="">All Statuses</option>
               <option value="pending">Pending</option>
@@ -59,7 +59,7 @@ export default async function OrdersPage({ searchParams }) {
             <select
               name="paymentStatus"
               defaultValue={paymentStatus}
-              className="rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-900"
+              className="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 bg-white cursor-pointer"
             >
               <option value="">All Payments</option>
               <option value="pending">Pending</option>
@@ -70,7 +70,7 @@ export default async function OrdersPage({ searchParams }) {
             
             <button
               type="submit"
-              className="px-4 py-2 bg-gray-900 text-white rounded-md text-sm font-medium hover:bg-gray-800 transition-colors"
+              className="px-5 py-2 bg-slate-900 text-white rounded-xl text-sm font-bold tracking-wide hover:bg-slate-800 transition-colors shadow-sm"
             >
               Filter
             </button>
@@ -78,7 +78,7 @@ export default async function OrdersPage({ searchParams }) {
             {(search || status || paymentStatus) && (
               <Link 
                 href="/admin/orders"
-                className="px-4 py-2 bg-gray-100 text-gray-700 rounded-md text-sm font-medium hover:bg-gray-200 transition-colors flex items-center"
+                className="px-5 py-2 bg-slate-100 text-slate-700 rounded-xl text-sm font-bold tracking-wide hover:bg-slate-200 transition-colors flex items-center"
               >
                 Clear
               </Link>

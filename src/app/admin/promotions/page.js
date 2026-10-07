@@ -25,9 +25,9 @@ export default async function PromotionsPage({ searchParams }) {
         </div>
         <Link
           href="/admin/promotions/new"
-          className="inline-flex items-center justify-center px-4 py-2 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition-colors"
+          className="inline-flex items-center justify-center px-5 py-2.5 bg-gradient-to-r from-rose-500 to-pink-500 text-white text-sm font-bold tracking-wide rounded-xl shadow-md shadow-rose-200 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200"
         >
-          Create Promotion
+          + Create Promotion
         </Link>
       </div>
 

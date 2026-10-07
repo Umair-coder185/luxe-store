@@ -256,7 +256,7 @@ export default function ProductTable({
 
       {/* Product List Table */}
       {products.length === 0 ? (
-        <div className="bg-white rounded-xl border border-dashed border-gray-300 p-12 text-center shadow-sm">
+        <div className="bg-slate-50 rounded-2xl border border-dashed border-slate-300 p-12 text-center shadow-sm">
           <div className="inline-flex p-3 rounded-full bg-gray-100 text-gray-500 mb-3">
             <PackageIcon className="w-6 h-6" />
           </div>
@@ -287,21 +287,21 @@ export default function ProductTable({
           </div>
         </div>
       ) : (
-        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
+        <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
           <div className="overflow-x-auto">
-            <table className="w-full text-xs text-left">
-              <thead className="bg-gray-50 text-gray-600 uppercase font-semibold border-b border-gray-200">
+            <table className="w-full text-xs text-left border-collapse">
+              <thead className="bg-slate-50/80 text-slate-600 uppercase font-semibold border-b border-slate-200 tracking-wider">
                 <tr>
-                  <th className="px-4 py-3.5">Product</th>
-                  <th className="px-4 py-3.5">Category</th>
-                  <th className="px-4 py-3.5">Brand</th>
-                  <th className="px-4 py-3.5">Price</th>
-                  <th className="px-4 py-3.5">Stock</th>
-                  <th className="px-4 py-3.5">Status</th>
-                  <th className="px-4 py-3.5 text-right">Actions</th>
+                  <th className="px-6 py-4">Product</th>
+                  <th className="px-6 py-4">Category</th>
+                  <th className="px-6 py-4">Brand</th>
+                  <th className="px-6 py-4">Price</th>
+                  <th className="px-6 py-4">Stock</th>
+                  <th className="px-6 py-4">Status</th>
+                  <th className="px-6 py-4 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100 bg-white">
+              <tbody className="divide-y divide-slate-100 bg-white">
                 {products.map((product) => {
                   const primaryImg = product.images?.[0]?.url;
                   const isOutOfStock = product.stock <= 0;
@@ -309,30 +309,30 @@ export default function ProductTable({
                     product.compareAtPrice && product.compareAtPrice > product.price;
 
                   return (
-                    <tr key={product._id} className="hover:bg-gray-50/60 transition-colors">
+                    <tr key={product._id} className="hover:bg-slate-50/80 transition-colors duration-200 group">
                       {/* Product Thumbnail & Name */}
-                      <td className="px-4 py-3.5">
-                        <div className="flex items-center gap-3">
-                          <div className="w-12 h-12 rounded-lg border border-gray-200 bg-gray-100 overflow-hidden shrink-0 flex items-center justify-center">
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-4">
+                          <div className="w-12 h-12 rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden shrink-0 flex items-center justify-center">
                             {primaryImg ? (
                               // eslint-disable-next-line @next/next/no-img-element
                               <img
                                 src={primaryImg}
                                 alt={product.name}
-                                className="w-full h-full object-cover"
+                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                               />
                             ) : (
-                              <PackageIcon className="w-5 h-5 text-gray-400" />
+                              <PackageIcon className="w-5 h-5 text-slate-300" />
                             )}
                           </div>
                           <div className="min-w-0 max-w-xs">
                             <Link
                               href={`/admin/products/${product._id}/edit`}
-                              className="font-semibold text-gray-900 hover:underline truncate block"
+                              className="font-bold text-slate-800 hover:text-indigo-600 truncate block transition-colors text-sm"
                             >
                               {product.name}
                             </Link>
-                            <p className="text-[11px] text-gray-400 font-mono truncate">
+                            <p className="text-[11px] text-slate-400 font-medium truncate mt-0.5">
                               /{product.slug}
                             </p>
                           </div>
@@ -340,23 +340,23 @@ export default function ProductTable({
                       </td>
 
                       {/* Category */}
-                      <td className="px-4 py-3.5 text-gray-700 whitespace-nowrap">
+                      <td className="px-6 py-4 text-slate-600 font-medium whitespace-nowrap text-sm">
                         {product.category?.name || '—'}
                       </td>
 
                       {/* Brand */}
-                      <td className="px-4 py-3.5 text-gray-700 whitespace-nowrap">
+                      <td className="px-6 py-4 text-slate-600 font-medium whitespace-nowrap text-sm">
                         {product.brand?.name || '—'}
                       </td>
 
                       {/* Price */}
-                      <td className="px-4 py-3.5 whitespace-nowrap">
+                      <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-baseline gap-1.5">
-                          <span className="font-semibold text-gray-900">
+                          <span className="font-bold text-slate-800 text-sm">
                             ${Number(product.price).toFixed(2)}
                           </span>
                           {hasDiscount && (
-                            <span className="text-[11px] text-gray-400 line-through">
+                            <span className="text-[11px] font-medium text-slate-400 line-through">
                               ${Number(product.compareAtPrice).toFixed(2)}
                             </span>
                           )}
@@ -364,27 +364,27 @@ export default function ProductTable({
                       </td>
 
                       {/* Stock */}
-                      <td className="px-4 py-3.5 whitespace-nowrap">
+                      <td className="px-6 py-4 whitespace-nowrap">
                         <span
-                          className={`inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium ${
+                          className={`inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold tracking-wide uppercase shadow-sm border ${
                             isOutOfStock
-                              ? 'bg-red-50 text-red-700 ring-1 ring-red-600/20'
+                              ? 'bg-rose-500/10 text-rose-600 border-rose-500/20'
                               : product.stock < 10
-                              ? 'bg-amber-50 text-amber-800 ring-1 ring-amber-600/20'
-                              : 'bg-gray-100 text-gray-700'
+                              ? 'bg-amber-500/10 text-amber-600 border-amber-500/20'
+                              : 'bg-slate-100 text-slate-600 border-slate-200'
                           }`}
                         >
-                          {isOutOfStock ? '0 (Out of stock)' : `${product.stock} in stock`}
+                          {isOutOfStock ? 'Out of stock' : `${product.stock} in stock`}
                         </span>
                       </td>
 
                       {/* Status */}
-                      <td className="px-4 py-3.5 whitespace-nowrap">
+                      <td className="px-6 py-4 whitespace-nowrap">
                         <span
-                          className={`inline-flex px-2 py-0.5 rounded-full text-[11px] font-medium ${
+                          className={`inline-flex px-3 py-1 rounded-full text-[10px] font-bold tracking-wide uppercase shadow-sm border ${
                             product.isActive
-                              ? 'bg-green-50 text-green-700 ring-1 ring-green-600/20'
-                              : 'bg-gray-100 text-gray-500 ring-1 ring-gray-500/10'
+                              ? 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20'
+                              : 'bg-slate-100 text-slate-500 border-slate-200'
                           }`}
                         >
                           {product.isActive ? 'Active' : 'Inactive'}
@@ -392,11 +392,11 @@ export default function ProductTable({
                       </td>
 
                       {/* Actions */}
-                      <td className="px-4 py-3.5 text-right whitespace-nowrap">
-                        <div className="inline-flex items-center gap-3">
+                      <td className="px-6 py-4 text-right whitespace-nowrap">
+                        <div className="inline-flex items-center justify-end gap-4">
                           <Link
                             href={`/admin/products/${product._id}/edit`}
-                            className="text-gray-600 hover:text-gray-900 font-medium transition-colors"
+                            className="text-indigo-500 font-semibold hover:text-indigo-700 transition-colors text-sm"
                           >
                             Edit
                           </Link>
@@ -407,7 +407,7 @@ export default function ProductTable({
                               setDeleteError(null);
                               setIsOrderConflict(false);
                             }}
-                            className="text-red-500 hover:text-red-700 font-medium transition-colors"
+                            className="text-rose-500 font-semibold hover:text-rose-700 transition-colors text-sm"
                           >
                             Delete
                           </button>

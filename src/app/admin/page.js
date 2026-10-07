@@ -71,13 +71,13 @@ export default async function AdminDashboardPage() {
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
-        <StatsCard label="Total Revenue" value={formatCurrency(stats.totalRevenue)} icon={RevenueIcon} />
-        <StatsCard label="Total Orders" value={stats.totalOrders.toLocaleString()} icon={OrdersIcon} />
-        <StatsCard label="Active Orders" value={stats.activeOrders.toLocaleString()} icon={AlertIcon} />
-        <StatsCard label="Total Products" value={stats.totalProducts.toLocaleString()} icon={ProductsIcon} />
-        <StatsCard label="Active Products" value={stats.activeProducts.toLocaleString()} icon={ProductsIcon} />
-        <StatsCard label="Low Stock" value={stats.lowStockCount.toLocaleString()} icon={AlertIcon} />
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
+        <StatsCard label="Total Revenue" value={formatCurrency(stats.totalRevenue)} icon={RevenueIcon} colorTheme="emerald" />
+        <StatsCard label="Total Orders" value={stats.totalOrders.toLocaleString()} icon={OrdersIcon} colorTheme="blue" />
+        <StatsCard label="Active Orders" value={stats.activeOrders.toLocaleString()} icon={AlertIcon} colorTheme="amber" />
+        <StatsCard label="Total Products" value={stats.totalProducts.toLocaleString()} icon={ProductsIcon} colorTheme="purple" />
+        <StatsCard label="Active Products" value={stats.activeProducts.toLocaleString()} icon={ProductsIcon} colorTheme="cyan" />
+        <StatsCard label="Low Stock" value={stats.lowStockCount.toLocaleString()} icon={AlertIcon} colorTheme="rose" />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

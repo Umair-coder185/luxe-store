@@ -10,7 +10,7 @@ export default function WishlistItem({ item, onRemove }) {
   return (
     <div className="group flex flex-col">
       <div className="relative aspect-[3/4] bg-neutral-100 mb-4 overflow-hidden">
-        <Link href={`/products/${item.slug}`} className="block w-full h-full">
+        <Link href={`/products/${item.slug}`} className="relative block w-full h-full">
           {item.image?.url ? (
             <Image
               src={item.image.url}
@@ -35,7 +35,7 @@ export default function WishlistItem({ item, onRemove }) {
         <Link href={`/products/${item.slug}`} className="text-sm font-medium text-neutral-900 hover:underline decoration-neutral-300 underline-offset-4">
           {item.name}
         </Link>
-        <span className="text-sm text-neutral-900">
+        <span className="text-sm font-bold text-red-600">
           {priceFormatter.format(item.price)}
         </span>
         <button

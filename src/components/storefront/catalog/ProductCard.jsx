@@ -77,7 +77,7 @@ export default function ProductCard({ product, priority = false }) {
           {product.name}
         </Link>
         <div className="flex items-center space-x-2 text-sm mt-1">
-          <span className={`${hasDiscount ? "text-neutral-600 font-semibold" : "text-neutral-900"}`}>
+          <span className={`${hasDiscount ? "text-red-600 font-bold" : "text-red-600 font-semibold"}`}>
             {priceFormatter.format(currentPrice)}
           </span>
           {hasDiscount && (

@@ -31,9 +31,9 @@ export default async function BrandsPage({ searchParams }) {
         </div>
         <Link
           href="/admin/brands/new"
-          className="inline-flex items-center justify-center px-4 py-2 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition-colors"
+          className="inline-flex items-center justify-center px-5 py-2.5 bg-gradient-to-r from-cyan-500 to-blue-500 text-white text-sm font-bold tracking-wide rounded-xl shadow-md shadow-cyan-200 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200"
         >
-          Add Brand
+          + Add Brand
         </Link>
       </div>
 

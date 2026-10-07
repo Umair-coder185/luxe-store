@@ -5,49 +5,49 @@ import Link from 'next/link';
 export default function LowStockProducts({ products = [] }) {
   if (!products.length) {
     return (
-      <div className="rounded-lg border border-gray-200 bg-white py-8 text-center">
-        <p className="text-sm text-gray-500">All products are well-stocked.</p>
+      <div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 py-12 text-center shadow-sm">
+        <p className="text-sm font-medium text-slate-500">All products are well-stocked.</p>
       </div>
     );
   }
 
   return (
-    <div className="rounded-lg border border-gray-200 bg-white divide-y divide-gray-100">
+    <div className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden divide-y divide-slate-100">
       {products.map(product => (
         <Link
           key={product._id}
           href={`/admin/products/${product._id}/edit`}
-          className="flex items-center justify-between gap-4 px-6 py-4 hover:bg-gray-50 transition-colors"
+          className="group flex items-center justify-between gap-4 px-6 py-4 hover:bg-slate-50 transition-all duration-200"
         >
           <div className="flex items-center gap-4 min-w-0">
             {product.image ? (
-              <div className="h-10 w-10 shrink-0 overflow-hidden rounded-md border border-gray-200 bg-gray-50">
-                <img src={product.image} alt={product.name} className="h-full w-full object-cover" />
+              <div className="h-12 w-12 shrink-0 overflow-hidden rounded-xl border border-slate-200 shadow-sm bg-white">
+                <img src={product.image} alt={product.name} className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300" />
               </div>
             ) : (
-              <div className="h-10 w-10 shrink-0 rounded-md border border-gray-200 bg-gray-50 flex items-center justify-center">
-                <span className="text-gray-400 text-[10px]">No img</span>
+              <div className="h-12 w-12 shrink-0 rounded-xl border border-slate-200 shadow-sm bg-slate-50 flex items-center justify-center">
+                <span className="text-slate-400 text-xs font-medium">No img</span>
               </div>
             )}
             <div className="min-w-0">
-              <p className="text-sm font-medium text-gray-900 truncate flex items-center gap-2">
+              <p className="text-sm font-bold text-slate-800 truncate flex items-center gap-2 group-hover:text-indigo-600 transition-colors">
                 {product.name}
                 {!product.isActive && (
-                  <span className="inline-flex items-center rounded-full bg-gray-100 px-1.5 py-0.5 text-xs font-medium text-gray-600">
+                  <span className="inline-flex items-center rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-bold text-slate-500 uppercase tracking-wider border border-slate-200">
                     Draft
                   </span>
                 )}
               </p>
-              <p className="text-xs text-gray-500 truncate">{product.brand}</p>
+              <p className="text-xs font-medium text-slate-500 truncate">{product.brand}</p>
             </div>
           </div>
 
           {product.stock === 0 ? (
-            <span className="shrink-0 text-xs font-medium text-red-600 bg-red-50 px-2.5 py-0.5 rounded-full">
+            <span className="shrink-0 text-[10px] uppercase tracking-wider font-bold text-rose-600 bg-rose-500/10 border border-rose-500/20 px-3 py-1 rounded-full shadow-sm">
               Out of stock
             </span>
           ) : (
-            <span className="shrink-0 text-sm font-medium text-amber-600">
+            <span className="shrink-0 text-xs font-bold text-amber-600">
               {product.stock} left
             </span>
           )}

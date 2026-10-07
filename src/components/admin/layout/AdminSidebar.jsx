@@ -4,14 +4,14 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 const NAV_ITEMS = [
-  { href: '/admin', label: 'Dashboard', icon: DashboardIcon },
-  { href: '/admin/navigation', label: 'Navigation', icon: MapIcon },
-  { href: '/admin/promotions', label: 'Promotions', icon: TicketIcon },
-  { href: '/admin/products', label: 'Products', icon: PackageIcon },
-  { href: '/admin/categories', label: 'Categories', icon: FolderIcon },
-  { href: '/admin/brands', label: 'Brands', icon: TagIcon },
-  { href: '/admin/collections', label: 'Collections', icon: LayersIcon },
-  { href: '/admin/orders', label: 'Orders', icon: ShoppingCartIcon },
+  { href: '/admin', label: 'Dashboard', icon: DashboardIcon, color: 'text-blue-600', bg: 'bg-blue-500/10', activeBg: 'bg-blue-500/20 border-blue-500/30' },
+  { href: '/admin/navigation', label: 'Navigation', icon: MapIcon, color: 'text-emerald-600', bg: 'bg-emerald-500/10', activeBg: 'bg-emerald-500/20 border-emerald-500/30' },
+  { href: '/admin/promotions', label: 'Promotions', icon: TicketIcon, color: 'text-rose-600', bg: 'bg-rose-500/10', activeBg: 'bg-rose-500/20 border-rose-500/30' },
+  { href: '/admin/products', label: 'Products', icon: PackageIcon, color: 'text-violet-600', bg: 'bg-violet-500/10', activeBg: 'bg-violet-500/20 border-violet-500/30' },
+  { href: '/admin/categories', label: 'Categories', icon: FolderIcon, color: 'text-amber-600', bg: 'bg-amber-500/10', activeBg: 'bg-amber-500/20 border-amber-500/30' },
+  { href: '/admin/brands', label: 'Brands', icon: TagIcon, color: 'text-cyan-600', bg: 'bg-cyan-500/10', activeBg: 'bg-cyan-500/20 border-cyan-500/30' },
+  { href: '/admin/collections', label: 'Collections', icon: LayersIcon, color: 'text-fuchsia-600', bg: 'bg-fuchsia-500/10', activeBg: 'bg-fuchsia-500/20 border-fuchsia-500/30' },
+  { href: '/admin/orders', label: 'Orders', icon: ShoppingCartIcon, color: 'text-orange-600', bg: 'bg-orange-500/10', activeBg: 'bg-orange-500/20 border-orange-500/30' },
 ];
 
 export default function AdminSidebar({ isOpen, onClose }) {
@@ -30,22 +30,22 @@ export default function AdminSidebar({ isOpen, onClose }) {
       {/* Sidebar */}
       <aside
         className={`
-          fixed top-0 left-0 z-50 h-full w-64 bg-white border-r border-gray-200
-          transition-transform duration-200 ease-in-out
+          fixed top-0 left-0 z-50 h-full w-64 bg-slate-50 shadow-2xl border-r border-gray-200
+          transition-transform duration-300 ease-out
           lg:translate-x-0 lg:static lg:z-auto
           ${isOpen ? 'translate-x-0' : '-translate-x-full'}
         `}
       >
         {/* Brand */}
-        <div className="flex items-center h-16 px-6 border-b border-gray-200">
-          <Link href="/admin" onClick={onClose} className="text-lg font-semibold text-gray-900">
-            Admin Panel
+        <div className="flex items-center h-20 px-6 border-b border-gray-200 bg-white">
+          <Link href="/admin" onClick={onClose} className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-violet-600 tracking-wider">
+            LUXE ADMIN
           </Link>
         </div>
 
         {/* Navigation */}
-        <nav className="p-4 space-y-1">
-          {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
+        <nav className="p-4 space-y-2">
+          {NAV_ITEMS.map(({ href, label, icon: Icon, color, bg, activeBg }) => {
             const isActive =
               href === '/admin'
                 ? pathname === '/admin'
@@ -57,14 +57,14 @@ export default function AdminSidebar({ isOpen, onClose }) {
                 href={href}
                 onClick={onClose}
                 className={`
-                  flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium
-                  transition-colors duration-150
+                  flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold
+                  transition-all duration-300 group ${color}
                   ${isActive
-                    ? 'bg-gray-900 text-white'
-                    : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}
+                    ? `${activeBg} shadow-sm border`
+                    : `${bg} hover:opacity-80 hover:-translate-y-0.5 border border-transparent`}
                 `}
               >
-                <Icon className="w-5 h-5 shrink-0" />
+                <Icon className={`w-5 h-5 shrink-0 ${color}`} />
                 {label}
               </Link>
             );

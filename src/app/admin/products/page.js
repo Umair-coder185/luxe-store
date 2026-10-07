@@ -45,9 +45,9 @@ export default async function ProductsPage({ searchParams }) {
         </div>
         <Link
           href="/admin/products/new"
-          className="inline-flex items-center justify-center px-4 py-2 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition-colors shadow-sm"
+          className="inline-flex items-center justify-center px-5 py-2.5 bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white text-sm font-bold tracking-wide rounded-xl shadow-md shadow-violet-200 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200"
         >
-          Add Product
+          + Add Product
         </Link>
       </div>
 

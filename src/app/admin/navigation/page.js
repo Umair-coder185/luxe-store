@@ -21,9 +21,9 @@ export default async function NavigationPage() {
         </div>
         <Link
           href="/admin/navigation/new"
-          className="inline-flex items-center justify-center px-4 py-2 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition-colors"
+          className="inline-flex items-center justify-center px-5 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-sm font-bold tracking-wide rounded-xl shadow-md shadow-emerald-200 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200"
         >
-          Add Menu Item
+          + Add Menu Item
         </Link>
       </div>
 

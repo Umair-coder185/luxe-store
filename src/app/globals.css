@@ -6,6 +6,9 @@
   --color-neutral-200: #e5e5e5;
   --color-neutral-800: #262626;
   --color-neutral-900: #171717;
+  --font-sans: var(--font-montserrat);
+  --font-heading: var(--font-heading);
+  --font-logo: var(--font-logo);
 }
 
 @layer base {

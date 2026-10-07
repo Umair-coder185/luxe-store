@@ -9,10 +9,10 @@ import Link from 'next/link';
 export function StatusBadge(value) {
   return (
     <span
-      className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${
+      className={`inline-flex px-3 py-1 rounded-full text-xs font-bold tracking-wide uppercase ${
         value
-          ? 'bg-green-50 text-green-700 ring-1 ring-green-600/20'
-          : 'bg-gray-100 text-gray-500 ring-1 ring-gray-500/10'
+          ? 'bg-emerald-500/10 text-emerald-600 shadow-sm border border-emerald-500/20'
+          : 'bg-slate-100 text-slate-500 shadow-sm border border-slate-200'
       }`}
     >
       {value ? 'Active' : 'Inactive'}
@@ -79,31 +79,31 @@ export default function EntityTable({
         </div>
       )}
 
-      <div className="overflow-x-auto rounded-lg border border-gray-200">
-        <table className="w-full text-sm text-left">
-          <thead className="bg-gray-50">
+      <div className="overflow-x-auto rounded-2xl bg-white shadow-sm border border-slate-200">
+        <table className="w-full text-sm text-left border-collapse">
+          <thead className="bg-slate-50/80 border-b border-slate-200">
             <tr>
               {columns.map(col => (
                 <th
                   key={col.key}
-                  className="px-4 py-3 font-medium text-gray-500 whitespace-nowrap"
+                  className="px-6 py-4 font-semibold text-slate-600 tracking-wider text-xs uppercase"
                 >
                   {col.label}
                 </th>
               ))}
-              <th className="px-4 py-3 font-medium text-gray-500 text-right whitespace-nowrap">
+              <th className="px-6 py-4 font-semibold text-slate-600 tracking-wider text-xs uppercase text-right">
                 Actions
               </th>
             </tr>
           </thead>
 
-          <tbody className="divide-y divide-gray-100">
+          <tbody className="divide-y divide-slate-100">
             {data.map(item => (
-              <tr key={item._id} className="hover:bg-gray-50/50 transition-colors">
+              <tr key={item._id} className="hover:bg-slate-50/80 transition-colors duration-200 group">
                 {columns.map(col => (
                   <td
                     key={col.key}
-                    className="px-4 py-3 text-gray-900 whitespace-nowrap"
+                    className="px-6 py-4 text-slate-700 font-medium whitespace-nowrap"
                   >
                     {col.render
                       ? col.render(item[col.key], item)
@@ -111,7 +111,7 @@ export default function EntityTable({
                   </td>
                 ))}
 
-                <td className="px-4 py-3 text-right whitespace-nowrap">
+                <td className="px-6 py-4 text-right whitespace-nowrap">
                   {confirmId === item._id ? (
                     <span className="inline-flex items-center gap-1.5 text-xs">
                       <span className="text-red-600">Delete?</span>
@@ -131,11 +131,11 @@ export default function EntityTable({
                       </button>
                     </span>
                   ) : (
-                    <span className="inline-flex items-center gap-3">
+                    <span className="inline-flex items-center gap-4">
                       {editBasePath && (
                         <Link
                           href={`${editBasePath}/${item._id}/edit`}
-                          className={`text-gray-500 hover:text-gray-900 transition-colors ${
+                          className={`text-indigo-500 font-semibold hover:text-indigo-700 transition-colors ${
                             deleting ? 'pointer-events-none opacity-40' : ''
                           }`}
                         >
@@ -146,7 +146,7 @@ export default function EntityTable({
                         <button
                           onClick={() => setConfirmId(item._id)}
                           disabled={deleting}
-                          className="text-red-500 hover:text-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="text-rose-500 font-semibold hover:text-rose-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           Delete
                         </button>

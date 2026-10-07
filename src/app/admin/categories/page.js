@@ -25,9 +25,9 @@ export default async function CategoriesPage({ searchParams }) {
         </div>
         <Link
           href="/admin/categories/new"
-          className="inline-flex items-center justify-center px-4 py-2 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition-colors"
+          className="inline-flex items-center justify-center px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-sm font-bold tracking-wide rounded-xl shadow-md shadow-indigo-200 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200"
         >
-          Add Category
+          + Add Category
         </Link>
       </div>
 
