@@ -9,7 +9,8 @@ export async function GET(request, { params }) {
   if (error) return error;
 
   try {
-    const brand = await getBrandById(params.id);
+    const { id } = await params;
+    const brand = await getBrandById(id);
     if (!brand) return NextResponse.json({ success: false, error: 'Brand not found' }, { status: 404 });
     return NextResponse.json({ success: true, data: brand });
   } catch (err) {
@@ -22,14 +23,19 @@ export async function PUT(request, { params }) {
   if (error) return error;
 
   try {
+    const { id } = await params;
     const body = await request.json();
+    if (body.slug && typeof body.slug === 'string') {
+      body.slug = body.slug.trim().toLowerCase();
+    }
     const validation = validateBrand(body);
 
     if (!validation.valid) {
+      console.warn('[Admin Brands API - PUT Validation Failed]', validation.errors);
       return NextResponse.json({ success: false, error: 'Validation failed', details: validation.errors }, { status: 400 });
     }
 
-    const brand = await updateBrand(params.id, body);
+    const brand = await updateBrand(id, body);
     return NextResponse.json({ success: true, data: brand });
   } catch (err) {
     if (err.message.includes('already exists')) {
@@ -47,7 +53,8 @@ export async function DELETE(request, { params }) {
   if (error) return error;
 
   try {
-    await deleteBrand(params.id);
+    const { id } = await params;
+    await deleteBrand(id);
     return NextResponse.json({ success: true });
   } catch (err) {
     if (err.message === 'Brand not found') {

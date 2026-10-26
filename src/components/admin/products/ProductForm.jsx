@@ -17,6 +17,84 @@ function slugify(text) {
     .replace(/^-+|-+$/g, '');
 }
 
+function renderDescriptionPreview(content) {
+  if (!content || !content.trim()) {
+    return (
+      <div className="py-8 text-center text-xs text-gray-400 italic">
+        No description content to preview. Type above or click &ldquo;✨ Insert La Forma Template&rdquo;.
+      </div>
+    );
+  }
+
+  const lines = content.split('\n');
+  const elements = [];
+  let keyIndex = 0;
+
+  for (let i = 0; i < lines.length; i++) {
+    const rawLine = lines[i];
+    const trimmed = rawLine.trim();
+
+    if (!trimmed) continue;
+
+    if (trimmed.startsWith('### ')) {
+      elements.push(
+        <h4 key={keyIndex++} className="text-sm font-semibold text-neutral-900 mt-4 mb-2 tracking-tight">
+          {trimmed.replace(/^###\s+/, '')}
+        </h4>
+      );
+    } else if (trimmed.startsWith('## ')) {
+      elements.push(
+        <h3 key={keyIndex++} className="text-base font-medium text-neutral-900 mt-5 mb-2 tracking-tight">
+          {trimmed.replace(/^##\s+/, '')}
+        </h3>
+      );
+    } else if (trimmed.startsWith('✨ Pro Tip:') || trimmed.startsWith('Pro Tip:')) {
+      const tipText = trimmed.replace(/^✨?\s*Pro Tip:\s*/i, '');
+      elements.push(
+        <div key={keyIndex++} className="my-3 p-3.5 bg-amber-50/70 border-l-4 border-amber-400 rounded-r-lg text-amber-950 text-xs leading-relaxed">
+          <span className="font-semibold block mb-0.5 text-amber-900">
+            ✨ Pro Tip:
+          </span>
+          {tipText || (lines[i + 1] ? lines[++i].trim() : '')}
+        </div>
+      );
+    } else if (trimmed.startsWith('💼 Please note:') || trimmed.startsWith('Please note:') || trimmed.startsWith('Note:')) {
+      const noteText = trimmed.replace(/^💼?\s*Please note:\s*|^Note:\s*/i, '');
+      elements.push(
+        <div key={keyIndex++} className="my-3 p-3.5 bg-neutral-100/80 border-l-4 border-neutral-500 rounded-r-lg text-neutral-800 text-xs leading-relaxed">
+          <span className="font-semibold block mb-0.5 text-neutral-900">
+            💼 Please note:
+          </span>
+          {noteText || (lines[i + 1] ? lines[++i].trim() : '')}
+        </div>
+      );
+    } else if (
+      trimmed.startsWith('✅') ||
+      trimmed.startsWith('🧵') ||
+      trimmed.startsWith('🎯') ||
+      trimmed.startsWith('🌿') ||
+      trimmed.startsWith('🌟') ||
+      trimmed.startsWith('- ') ||
+      trimmed.startsWith('• ')
+    ) {
+      elements.push(
+        <div key={keyIndex++} className="flex items-start gap-2 py-0.5 text-xs text-neutral-700">
+          <span className="shrink-0 mt-0.5">{trimmed.slice(0, 2).trim() || '•'}</span>
+          <span>{trimmed.replace(/^[✅🧵🎯🌿🌟•\-]\s*/, '')}</span>
+        </div>
+      );
+    } else {
+      elements.push(
+        <p key={keyIndex++} className="text-xs text-neutral-600 leading-relaxed mb-2">
+          {trimmed}
+        </p>
+      );
+    }
+  }
+
+  return <div className="space-y-1">{elements}</div>;
+}
+
 export default function ProductForm({
   mode = 'create',
   productId,
@@ -51,6 +129,56 @@ export default function ProductForm({
       ? initialData.attributes
       : {}
   );
+
+  // Description enhanced editor state
+  const [descTab, setDescTab] = useState('write');
+  const descTextareaRef = useRef(null);
+
+  function handleInsertFormat(prefix, suffix = '', defaultText = '') {
+    const textarea = descTextareaRef.current;
+    if (!textarea) return;
+
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const selectedText = description.substring(start, end) || defaultText;
+    const replacement = `${prefix}${selectedText}${suffix}`;
+
+    const newDescription =
+      description.substring(0, start) + replacement + description.substring(end);
+    setDescription(newDescription);
+    if (errors.description) setErrors(prev => ({ ...prev, description: null }));
+
+    setTimeout(() => {
+      textarea.focus();
+      textarea.setSelectionRange(
+        start + prefix.length,
+        start + prefix.length + selectedText.length
+      );
+    }, 0);
+  }
+
+  function handleInsertTemplate() {
+    const template = `### Tailored Perfection for Your Luxury Collection
+Crafted to preserve your bag’s natural shape and protect the delicate interior. Handcrafted with dual-layer structure to support the curved base, prevent corner sagging, and keep leather showroom-fresh for years.
+
+### Why It's Essential:
+✅ Sculpted support for a supple silhouette
+🧵 Dual-layer design: inner structural core + removable washable cover
+🎯 Model-specific precision tailored to exact bag dimensions
+🌿 Sustainable luxury crafted with eco-conscious, breathable fabric
+🌟 Invisible closure and discreet branded details
+
+✨ Pro Tip:
+Choose the exact size for your bag to ensure a seamless fit. Still unsure? Our concierge team is ready to assist you.
+
+💼 Please note:
+The handbag shown in product images is for presentation only and is not included.`;
+
+    if (!description.trim() || window.confirm('Insert luxury La Forma description template?')) {
+      setDescription(template);
+      if (errors.description) setErrors(prev => ({ ...prev, description: null }));
+    }
+  }
 
   // Track images newly uploaded in this session for unsaved cleanup
   const newlyUploadedPublicIdsRef = useRef(new Set());
@@ -137,13 +265,14 @@ export default function ProductForm({
     if (!name.trim()) errs.name = 'Product name is required';
     else if (name.length > 150) errs.name = 'Product name cannot exceed 150 characters';
 
-    if (!slug.trim()) errs.slug = 'Slug is required';
-    else if (!/^[a-z0-9-]+$/.test(slug)) {
-      errs.slug = 'Slug can only contain lowercase letters, numbers, and hyphens';
+    const normalizedSlug = slug.trim().toLowerCase();
+    if (!normalizedSlug) errs.slug = 'Slug is required';
+    else if (!/^[a-z0-9-]+$/.test(normalizedSlug)) {
+      errs.slug = 'Slug can only contain letters, numbers, and hyphens';
     }
 
     if (!description.trim()) errs.description = 'Description is required';
-    else if (description.length > 2000) errs.description = 'Description cannot exceed 2000 characters';
+    else if (description.length > 10000) errs.description = 'Description cannot exceed 10000 characters';
 
     const numPrice = Number(price);
     if (price === '' || isNaN(numPrice) || numPrice < 0) {
@@ -209,7 +338,7 @@ export default function ProductForm({
 
     const payload = {
       name: name.trim(),
-      slug: slug.trim(),
+      slug: slug.trim().toLowerCase(),
       description: description.trim(),
       price: Number(price),
       compareAtPrice: compareAtPrice !== '' ? Number(compareAtPrice) : null,
@@ -227,11 +356,22 @@ export default function ProductForm({
     const method = mode === 'create' ? 'POST' : 'PUT';
 
     try {
-      const res = await fetch(endpoint, {
+      let res = await fetch(endpoint, {
         method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
+
+      if (res.status === 401) {
+        const refreshRes = await fetch('/api/auth/refresh', { method: 'POST' });
+        if (refreshRes.ok) {
+          res = await fetch(endpoint, {
+            method,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+          });
+        }
+      }
 
       const data = await res.json();
 
@@ -398,34 +538,135 @@ export default function ProductForm({
               {errors.slug && <p className="mt-1 text-xs text-red-600">{errors.slug}</p>}
             </div>
 
-            {/* Description */}
-            <div>
-              <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1.5">
-                Description <span className="text-red-500">*</span>
-              </label>
-              <textarea
-                id="description"
-                rows={5}
-                value={description}
-                maxLength={2000}
-                onChange={(e) => {
-                  setDescription(e.target.value);
-                  if (errors.description) setErrors(prev => ({ ...prev, description: null }));
-                }}
-                placeholder="Describe the product materials, craftsmanship, fitting..."
-                className={`w-full rounded-lg border px-3.5 py-2.5 text-sm text-gray-900 focus:outline-none focus:ring-2 ${
-                  errors.description
-                    ? 'border-red-300 focus:ring-red-500/20 focus:border-red-500'
-                    : 'border-gray-300 focus:ring-gray-900/20 focus:border-gray-900'
-                }`}
-              />
+            {/* Description with Luxury Toolbar & Storefront Preview */}
+            <div className="space-y-2">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <div className="flex items-center gap-3">
+                  <label htmlFor="description" className="block text-sm font-medium text-gray-700">
+                    Description <span className="text-red-500">*</span>
+                  </label>
+                  <div className="inline-flex rounded-md p-0.5 bg-gray-100 border border-gray-200 text-xs">
+                    <button
+                      type="button"
+                      onClick={() => setDescTab('write')}
+                      className={`px-2.5 py-1 rounded font-medium transition-colors ${
+                        descTab === 'write' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-900'
+                      }`}
+                    >
+                      Write
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setDescTab('preview')}
+                      className={`px-2.5 py-1 rounded font-medium transition-colors ${
+                        descTab === 'preview' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-900'
+                      }`}
+                    >
+                      Storefront Preview
+                    </button>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={handleInsertTemplate}
+                  className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium text-amber-900 bg-amber-50 hover:bg-amber-100 border border-amber-200 rounded-md transition-colors"
+                  title="Insert luxury template formatted like La Forma"
+                >
+                  <span>✨</span>
+                  <span>Insert La Forma Template</span>
+                </button>
+              </div>
+
+              {descTab === 'write' ? (
+                <div>
+                  {/* Toolbar */}
+                  <div className="flex flex-wrap items-center gap-1 p-1.5 bg-gray-50 border border-b-0 border-gray-300 rounded-t-lg text-xs text-gray-600">
+                    <button
+                      type="button"
+                      onClick={() => handleInsertFormat('**', '**', 'bold text')}
+                      className="px-2 py-1 rounded hover:bg-white hover:text-gray-900 font-bold border border-transparent hover:border-gray-200 transition-colors"
+                      title="Bold text"
+                    >
+                      B
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleInsertFormat('### ', '\n', 'Section Title')}
+                      className="px-2 py-1 rounded hover:bg-white hover:text-gray-900 font-semibold border border-transparent hover:border-gray-200 transition-colors"
+                      title="Heading"
+                    >
+                      H3
+                    </button>
+                    <span className="w-px h-4 bg-gray-300 mx-1" />
+                    <button
+                      type="button"
+                      onClick={() => handleInsertFormat('• ', '', 'Bullet item')}
+                      className="px-2 py-1 rounded hover:bg-white hover:text-gray-900 border border-transparent hover:border-gray-200 transition-colors"
+                      title="Bullet point"
+                    >
+                      • Bullet
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleInsertFormat('✅ ', '', 'Feature benefit')}
+                      className="px-2 py-1 rounded hover:bg-white hover:text-gray-900 border border-transparent hover:border-gray-200 transition-colors"
+                      title="Checkmark feature"
+                    >
+                      ✅ Feature
+                    </button>
+                    <span className="w-px h-4 bg-gray-300 mx-1" />
+                    <button
+                      type="button"
+                      onClick={() => handleInsertFormat('\n\n✨ Pro Tip:\n', '\n', 'Enter sizing or care tip...')}
+                      className="px-2 py-1 rounded hover:bg-amber-100 hover:text-amber-900 border border-transparent hover:border-amber-200 transition-colors"
+                      title="Pro Tip callout box"
+                    >
+                      ✨ Pro Tip
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleInsertFormat('\n\n💼 Please note:\n', '\n', 'Handbag shown is not included...')}
+                      className="px-2 py-1 rounded hover:bg-gray-200 hover:text-gray-900 border border-transparent hover:border-gray-300 transition-colors"
+                      title="Please note disclaimer"
+                    >
+                      💼 Note
+                    </button>
+                  </div>
+
+                  <textarea
+                    ref={descTextareaRef}
+                    id="description"
+                    rows={8}
+                    value={description}
+                    maxLength={10000}
+                    onChange={(e) => {
+                      setDescription(e.target.value);
+                      if (errors.description) setErrors(prev => ({ ...prev, description: null }));
+                    }}
+                    placeholder="Describe the product materials, craftsmanship, fitting... Use toolbar buttons or insert La Forma template."
+                    className={`w-full rounded-b-lg border px-3.5 py-2.5 text-sm text-gray-900 focus:outline-none focus:ring-2 font-mono ${
+                      errors.description
+                        ? 'border-red-300 focus:ring-red-500/20 focus:border-red-500'
+                        : 'border-gray-300 focus:ring-gray-900/20 focus:border-gray-900'
+                    }`}
+                  />
+                </div>
+              ) : (
+                <div className="w-full min-h-[220px] rounded-lg border border-gray-200 bg-neutral-50/50 p-5 text-sm text-gray-800">
+                  {renderDescriptionPreview(description)}
+                </div>
+              )}
+
               <div className="flex items-center justify-between mt-1">
                 {errors.description ? (
                   <p className="text-xs text-red-600">{errors.description}</p>
                 ) : (
-                  <span />
+                  <span className="text-[11px] text-gray-400">
+                    Supports headings (###), checkmarks (✅), bullet points (•), ✨ Pro Tip, and 💼 Note.
+                  </span>
                 )}
-                <span className="text-[11px] text-gray-400">{description.length}/2000</span>
+                <span className="text-[11px] text-gray-400">{description.length}/10000</span>
               </div>
             </div>
           </div>

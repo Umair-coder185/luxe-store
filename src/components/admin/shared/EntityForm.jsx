@@ -64,6 +64,7 @@ export default function EntityForm({
 
   function handleSlugInput(e) {
     slugEdited.current = true;
+    e.target.value = e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '-');
     handleChange(e);
   }
 
@@ -72,8 +73,11 @@ export default function EntityForm({
     setLoading(true);
     setErrors({});
 
-    // Coerce number fields before sending
+    // Coerce number fields and sanitize slug before sending
     const payload = { ...values };
+    if (payload.slug && typeof payload.slug === 'string') {
+      payload.slug = payload.slug.trim().toLowerCase();
+    }
     for (const f of fields) {
       if (f.type === 'number' && payload[f.name] !== '') {
         payload[f.name] = Number(payload[f.name]);
@@ -81,11 +85,22 @@ export default function EntityForm({
     }
 
     try {
-      const res = await fetch(action, {
+      let res = await fetch(action, {
         method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
+
+      if (res.status === 401) {
+        const refreshRes = await fetch('/api/auth/refresh', { method: 'POST' });
+        if (refreshRes.ok) {
+          res = await fetch(action, {
+            method,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+          });
+        }
+      }
 
       const data = await res.json();
 

@@ -5,18 +5,21 @@ export function validateBrand(data) {
 
   if (!data.name || typeof data.name !== 'string' || data.name.trim() === '') {
     errors.push({ field: 'name', message: 'Name is required' });
-  } else if (data.name.length > 50) {
-    errors.push({ field: 'name', message: 'Name cannot exceed 50 characters' });
+  } else if (data.name.length > 100) {
+    errors.push({ field: 'name', message: 'Name cannot exceed 100 characters' });
   }
 
   if (!data.slug || typeof data.slug !== 'string' || data.slug.trim() === '') {
     errors.push({ field: 'slug', message: 'Slug is required' });
-  } else if (!/^[a-z0-9-]+$/.test(data.slug)) {
-    errors.push({ field: 'slug', message: 'Slug can only contain lowercase letters, numbers, and hyphens' });
+  } else {
+    data.slug = data.slug.trim().toLowerCase();
+    if (!/^[a-z0-9-]+$/.test(data.slug)) {
+      errors.push({ field: 'slug', message: 'Slug can only contain lowercase letters, numbers, and hyphens' });
+    }
   }
 
-  if (data.description && typeof data.description === 'string' && data.description.length > 500) {
-    errors.push({ field: 'description', message: 'Description cannot exceed 500 characters' });
+  if (data.description && typeof data.description === 'string' && data.description.length > 2000) {
+    errors.push({ field: 'description', message: 'Description cannot exceed 2000 characters' });
   }
 
   return {
@@ -30,18 +33,21 @@ export function validateCategory(data) {
 
   if (!data.name || typeof data.name !== 'string' || data.name.trim() === '') {
     errors.push({ field: 'name', message: 'Name is required' });
-  } else if (data.name.length > 50) {
-    errors.push({ field: 'name', message: 'Name cannot exceed 50 characters' });
+  } else if (data.name.length > 100) {
+    errors.push({ field: 'name', message: 'Name cannot exceed 100 characters' });
   }
 
   if (!data.slug || typeof data.slug !== 'string' || data.slug.trim() === '') {
     errors.push({ field: 'slug', message: 'Slug is required' });
-  } else if (!/^[a-z0-9-]+$/.test(data.slug)) {
-    errors.push({ field: 'slug', message: 'Slug can only contain lowercase letters, numbers, and hyphens' });
+  } else {
+    data.slug = data.slug.trim().toLowerCase();
+    if (!/^[a-z0-9-]+$/.test(data.slug)) {
+      errors.push({ field: 'slug', message: 'Slug can only contain lowercase letters, numbers, and hyphens' });
+    }
   }
 
-  if (data.description && typeof data.description === 'string' && data.description.length > 500) {
-    errors.push({ field: 'description', message: 'Description cannot exceed 500 characters' });
+  if (data.description && typeof data.description === 'string' && data.description.length > 2000) {
+    errors.push({ field: 'description', message: 'Description cannot exceed 2000 characters' });
   }
 
   if (data.parent && data.parent !== '') {
@@ -61,18 +67,21 @@ export function validateCollection(data) {
 
   if (!data.name || typeof data.name !== 'string' || data.name.trim() === '') {
     errors.push({ field: 'name', message: 'Name is required' });
-  } else if (data.name.length > 50) {
-    errors.push({ field: 'name', message: 'Name cannot exceed 50 characters' });
+  } else if (data.name.length > 100) {
+    errors.push({ field: 'name', message: 'Name cannot exceed 100 characters' });
   }
 
   if (!data.slug || typeof data.slug !== 'string' || data.slug.trim() === '') {
     errors.push({ field: 'slug', message: 'Slug is required' });
-  } else if (!/^[a-z0-9-]+$/.test(data.slug)) {
-    errors.push({ field: 'slug', message: 'Slug can only contain lowercase letters, numbers, and hyphens' });
+  } else {
+    data.slug = data.slug.trim().toLowerCase();
+    if (!/^[a-z0-9-]+$/.test(data.slug)) {
+      errors.push({ field: 'slug', message: 'Slug can only contain lowercase letters, numbers, and hyphens' });
+    }
   }
 
-  if (data.description && typeof data.description === 'string' && data.description.length > 500) {
-    errors.push({ field: 'description', message: 'Description cannot exceed 500 characters' });
+  if (data.description && typeof data.description === 'string' && data.description.length > 2000) {
+    errors.push({ field: 'description', message: 'Description cannot exceed 2000 characters' });
   }
 
   if (data.startDate && isNaN(Date.parse(data.startDate))) {

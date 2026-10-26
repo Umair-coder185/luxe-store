@@ -18,15 +18,18 @@ export function validateProductData(data) {
   // Slug
   if (!payload.slug || typeof payload.slug !== 'string' || payload.slug.trim() === '') {
     errors.push({ field: 'slug', message: 'Slug is required' });
-  } else if (!/^[a-z0-9-]+$/.test(payload.slug)) {
-    errors.push({ field: 'slug', message: 'Slug can only contain lowercase letters, numbers, and hyphens' });
+  } else {
+    payload.slug = payload.slug.trim().toLowerCase();
+    if (!/^[a-z0-9-]+$/.test(payload.slug)) {
+      errors.push({ field: 'slug', message: 'Slug can only contain lowercase letters, numbers, and hyphens' });
+    }
   }
 
   // Description
   if (!payload.description || typeof payload.description !== 'string' || payload.description.trim() === '') {
     errors.push({ field: 'description', message: 'Description is required' });
-  } else if (payload.description.length > 2000) {
-    errors.push({ field: 'description', message: 'Description cannot exceed 2000 characters' });
+  } else if (payload.description.length > 10000) {
+    errors.push({ field: 'description', message: 'Description cannot exceed 10000 characters' });
   }
 
   // Price

@@ -21,6 +21,17 @@ export function serializeProductCard(doc) {
   };
 }
 
+function serializeAttributes(attributes) {
+  if (!attributes) return {};
+  if (attributes instanceof Map || typeof attributes.entries === 'function') {
+    return Object.fromEntries(attributes.entries());
+  }
+  if (typeof attributes === 'object') {
+    return { ...attributes };
+  }
+  return {};
+}
+
 export function serializeProductDetail(doc) {
   if (!doc) return null;
   return {
@@ -37,7 +48,7 @@ export function serializeProductDetail(doc) {
     collections: (doc.collections || []).map(c => ({ name: c.name, slug: c.slug })),
     stock: doc.stock,
     availability: doc.stock > 0 ? "in-stock" : "out-of-stock",
-    attributes: doc.attributes ? Object.fromEntries(doc.attributes) : {},
+    attributes: serializeAttributes(doc.attributes),
     variants: (doc.variants || []).map(v => ({
       id: v._id ? v._id.toString() : null,
       size: v.size || null,
@@ -131,7 +142,8 @@ export async function getProductBySlug(slug) {
   if (!slug) return null;
   await dbConnect();
   
-  const doc = await Product.findOne({ slug, isActive: true })
+  const normalizedSlug = String(slug).toLowerCase().trim();
+  const doc = await Product.findOne({ slug: normalizedSlug, isActive: true })
     .populate("brand", "name slug")
     .populate("category", "name slug")
     .populate("collections", "name slug")

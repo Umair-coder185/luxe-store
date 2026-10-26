@@ -9,7 +9,8 @@ export async function GET(request, { params }) {
   if (error) return error;
 
   try {
-    const collection = await getCollectionById(params.id);
+    const { id } = await params;
+    const collection = await getCollectionById(id);
     if (!collection) return NextResponse.json({ success: false, error: 'Collection not found' }, { status: 404 });
     return NextResponse.json({ success: true, data: collection });
   } catch (err) {
@@ -22,14 +23,18 @@ export async function PUT(request, { params }) {
   if (error) return error;
 
   try {
+    const { id } = await params;
     const body = await request.json();
+    if (body.slug && typeof body.slug === 'string') {
+      body.slug = body.slug.trim().toLowerCase();
+    }
     const validation = validateCollection(body);
 
     if (!validation.valid) {
       return NextResponse.json({ success: false, error: 'Validation failed', details: validation.errors }, { status: 400 });
     }
 
-    const collection = await updateCollection(params.id, body);
+    const collection = await updateCollection(id, body);
     return NextResponse.json({ success: true, data: collection });
   } catch (err) {
     if (err.message.includes('already exists')) {
@@ -47,7 +52,8 @@ export async function DELETE(request, { params }) {
   if (error) return error;
 
   try {
-    await deleteCollection(params.id);
+    const { id } = await params;
+    await deleteCollection(id);
     return NextResponse.json({ success: true });
   } catch (err) {
     if (err.message === 'Collection not found') {

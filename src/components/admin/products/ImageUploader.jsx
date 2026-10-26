@@ -60,10 +60,24 @@ export default function ImageUploader({
         const file = files[i];
         setUploadProgress(`Uploading ${i + 1} of ${files.length}: ${file.name}...`);
 
-        // 1. Fetch secure signature from server
-        const sigRes = await fetch('/api/admin/media/signature');
+        // 1. Fetch secure signature from server (with transparent auto-refresh if 15m token expired)
+        let sigRes = await fetch('/api/admin/media/signature');
+        if (sigRes.status === 401) {
+          const refreshRes = await fetch('/api/auth/refresh', { method: 'POST' });
+          if (refreshRes.ok) {
+            sigRes = await fetch('/api/admin/media/signature');
+          }
+        }
+
         if (!sigRes.ok) {
-          throw new Error('Failed to get secure upload authorization');
+          if (sigRes.status === 401) {
+            throw new Error('Your admin session has expired. Please refresh the page or sign in again.');
+          }
+          if (sigRes.status === 403) {
+            throw new Error('Administrator permissions required to upload media.');
+          }
+          const errData = await sigRes.json().catch(() => ({}));
+          throw new Error(errData.error || errData.message || 'Failed to get secure upload authorization');
         }
         const sigData = await sigRes.json();
 

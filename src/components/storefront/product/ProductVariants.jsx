@@ -41,12 +41,12 @@ export default function ProductVariants({ variants, selectedVariantId, onSelectV
               aria-pressed={isSelected}
               aria-label={`${label}${isSoldOut ? ', Sold out' : ''}`}
               className={`
-                px-4 py-2 text-sm border focus:outline-none focus:ring-2 focus:ring-neutral-900 transition-colors
+                px-4 py-2.5 text-xs md:text-sm font-medium rounded-lg border focus:outline-none focus:ring-2 focus:ring-neutral-900 transition-all
                 ${isSelected 
-                  ? "border-neutral-900 ring-1 ring-neutral-900" 
-                  : "border-neutral-200 text-neutral-700 hover:border-neutral-400"
+                  ? "border-neutral-900 bg-neutral-900 text-white shadow-xs" 
+                  : "border-neutral-200 bg-white text-neutral-800 hover:border-neutral-400"
                 }
-                ${isSoldOut ? "opacity-50 line-through decoration-neutral-400 cursor-not-allowed" : ""}
+                ${isSoldOut ? "opacity-40 line-through decoration-neutral-400 cursor-not-allowed bg-neutral-50" : ""}
               `}
             >
               {label}

@@ -7,7 +7,8 @@ export default function AddToCartButton({
   product, 
   selectedVariantId, 
   isPurchasable, 
-  disabledReason 
+  disabledReason,
+  quantity = 1,
 }) {
   const addItem = useCartStore((state) => state.addItem);
   const [status, setStatus] = useState("idle"); // idle, success
@@ -37,7 +38,7 @@ export default function AddToCartButton({
       variantId: variant ? variant.id : null,
       size: variant?.size ?? null,
       color: variant?.color ?? null,
-      quantity: 1,
+      quantity: Math.max(1, Number(quantity) || 1),
     };
 
     addItem(payload);

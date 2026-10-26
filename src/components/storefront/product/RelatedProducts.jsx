@@ -1,8 +1,8 @@
 import { getRelatedProducts } from "@/lib/queries/storefront/products";
 import ProductGrid from "@/components/storefront/catalog/ProductGrid";
 
-export default async function RelatedProducts({ productId, categoryId }) {
-  const products = await getRelatedProducts({ currentProductId: productId, categoryId });
+export default async function RelatedProducts({ productId, categorySlug }) {
+  const products = await getRelatedProducts({ currentProductId: productId, categorySlug });
 
   if (!products || products.length === 0) return null;
 

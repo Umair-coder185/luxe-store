@@ -9,7 +9,8 @@ export async function GET(request, { params }) {
   if (error) return error;
 
   try {
-    const category = await getCategoryById(params.id);
+    const { id } = await params;
+    const category = await getCategoryById(id);
     if (!category) return NextResponse.json({ success: false, error: 'Category not found' }, { status: 404 });
     return NextResponse.json({ success: true, data: category });
   } catch (err) {
@@ -22,14 +23,18 @@ export async function PUT(request, { params }) {
   if (error) return error;
 
   try {
+    const { id } = await params;
     const body = await request.json();
+    if (body.slug && typeof body.slug === 'string') {
+      body.slug = body.slug.trim().toLowerCase();
+    }
     const validation = validateCategory(body);
 
     if (!validation.valid) {
       return NextResponse.json({ success: false, error: 'Validation failed', details: validation.errors }, { status: 400 });
     }
 
-    const category = await updateCategory(params.id, body);
+    const category = await updateCategory(id, body);
     return NextResponse.json({ success: true, data: category });
   } catch (err) {
     if (err.message.includes('already exists') || err.message.includes('cannot be its own parent')) {
@@ -47,7 +52,8 @@ export async function DELETE(request, { params }) {
   if (error) return error;
 
   try {
-    await deleteCategory(params.id);
+    const { id } = await params;
+    await deleteCategory(id);
     return NextResponse.json({ success: true });
   } catch (err) {
     if (err.message === 'Category not found') {
