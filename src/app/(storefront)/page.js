@@ -2,43 +2,22 @@ import Link from "next/link";
 import Image from "next/image";
 import { getHomepageData } from "@/lib/queries/storefront/home";
 import ProductGrid from "@/components/storefront/catalog/ProductGrid";
-import { mockHandbags } from "@/lib/mockData";
+import HeroSpecialOffersCarousel from "@/components/storefront/home/HeroSpecialOffersCarousel";
 
 export default async function StorefrontHomepage() {
-  const { newArrivals, categories, collections } = await getHomepageData();
+  const {
+    newArrivals,
+    categories,
+    collections,
+    handbags,
+    brands,
+    heroOffers,
+  } = await getHomepageData();
 
   return (
     <div className="flex flex-col">
-      {/* Hero Section */}
-      <section className="relative h-[80vh] flex items-center justify-center bg-neutral-900 overflow-hidden">
-        {/* Background Image (User must place hero-interior.jpg in public/ folder) */}
-        <Image 
-          src="/hero-interior.jpg" 
-          alt="Luxury Store Interior" 
-          fill 
-          priority
-          className="object-cover object-center opacity-70"
-          sizes="100vw"
-        />
-        
-        {/* Content */}
-        <div className="text-center space-y-4 z-10 px-4 relative">
-          <h1 className="text-7xl md:text-9xl font-logo tracking-wide text-[#d4af37] drop-shadow-2xl">
-            Luxe Edit
-          </h1>
-          <p className="text-lg md:text-xl font-light text-white/90 max-w-lg mx-auto drop-shadow-md">
-            Discover the new season collection. Refined, effortless, and premium.
-          </p>
-          <div className="pt-6">
-            <Link
-              href="/products"
-              className="inline-block px-10 py-3.5 bg-white text-neutral-900 hover:bg-neutral-100 transition-colors duration-200 text-sm font-medium tracking-wide shadow-lg"
-            >
-              Shop the Collection
-            </Link>
-          </div>
-        </div>
-      </section>
+      {/* Hero Special Offers Carousel */}
+      <HeroSpecialOffersCarousel offers={heroOffers} />
 
       {/* Shop by Category */}
       {categories && categories.length > 0 && (
@@ -140,14 +119,86 @@ export default async function StorefrontHomepage() {
       )}
 
       {/* Handbags */}
-      <section className="pb-24 px-4 md:px-8 max-w-7xl mx-auto w-full">
-        <div className="flex items-center justify-between mb-12">
-          <h2 className="text-3xl md:text-4xl font-heading font-bold text-neutral-900 tracking-widest uppercase">Handbags</h2>
-          <Link href="/categories/handbags" className="text-sm font-medium text-neutral-500 hover:text-neutral-900 border-b border-transparent hover:border-neutral-900 transition-all">
-            Shop Handbags
-          </Link>
+      {handbags && handbags.length > 0 && (
+        <section className="pb-24 px-4 md:px-8 max-w-7xl mx-auto w-full">
+          <div className="flex items-center justify-between mb-12">
+            <h2 className="text-3xl md:text-4xl font-heading font-bold text-neutral-900 tracking-widest uppercase">Handbags</h2>
+            <Link href="/categories/handbags" className="text-sm font-medium text-neutral-500 hover:text-neutral-900 border-b border-transparent hover:border-neutral-900 transition-all">
+              Shop Handbags
+            </Link>
+          </div>
+          <ProductGrid products={handbags} />
+        </section>
+      )}
+
+      {/* Featured Designers / Shop by Brand */}
+      {brands && brands.length > 0 && (
+        <section className="py-24 px-4 md:px-8 bg-gradient-to-b from-white via-[#fcfbf8] to-[#f6f2e9] border-t border-neutral-200 text-neutral-900">
+          <div className="max-w-7xl mx-auto w-full">
+            <div className="text-center mb-14 space-y-3">
+              <p className="text-xs font-semibold tracking-[0.3em] uppercase text-[#9a7422]">
+                Curated Houses
+              </p>
+              <h2 className="text-3xl md:text-4xl font-heading font-bold tracking-widest uppercase text-neutral-900">
+                Featured Designers
+              </h2>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+              {brands.map((brand) => (
+                <Link
+                  key={brand.id}
+                  href={`/brands/${brand.slug}`}
+                  className="group relative flex flex-col items-center justify-center p-8 md:p-10 rounded-xl border border-neutral-200 bg-white shadow-sm hover:shadow-lg hover:border-[#b38b36] transition-all duration-300 text-center"
+                >
+                  <span className="font-serif text-xl md:text-2xl tracking-widest uppercase text-neutral-900 group-hover:text-[#9a7422] transition-colors">
+                    {brand.name}
+                  </span>
+                  <span className="mt-3 text-[11px] font-medium tracking-[0.2em] uppercase text-neutral-500 group-hover:text-neutral-900 transition-colors">
+                    Explore Maison &rarr;
+                  </span>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Luxury Service & Authenticity Strip */}
+      <section className="py-16 px-4 md:px-8 bg-neutral-50 border-t border-neutral-200">
+        <div className="max-w-7xl mx-auto w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 text-center">
+          <div className="space-y-2 px-4">
+            <div className="text-xs tracking-[0.25em] uppercase font-semibold text-neutral-900">
+              100% Authenticity
+            </div>
+            <p className="text-xs text-neutral-500 leading-relaxed">
+              Every timepiece, handbag, and jewel is verified by our in-house luxury specialists.
+            </p>
+          </div>
+          <div className="space-y-2 px-4">
+            <div className="text-xs tracking-[0.25em] uppercase font-semibold text-neutral-900">
+              Express Global Delivery
+            </div>
+            <p className="text-xs text-neutral-500 leading-relaxed">
+              Insured, priority door-to-door shipping on every order with real-time tracking.
+            </p>
+          </div>
+          <div className="space-y-2 px-4">
+            <div className="text-xs tracking-[0.25em] uppercase font-semibold text-neutral-900">
+              Signature Packaging
+            </div>
+            <p className="text-xs text-neutral-500 leading-relaxed">
+              Presented in protective dust bags and luxury gift-ready presentation boxes.
+            </p>
+          </div>
+          <div className="space-y-2 px-4">
+            <div className="text-xs tracking-[0.25em] uppercase font-semibold text-neutral-900">
+              Client Concierge
+            </div>
+            <p className="text-xs text-neutral-500 leading-relaxed">
+              Dedicated personal styling and after-care assistance for your luxury wardrobe.
+            </p>
+          </div>
         </div>
-        <ProductGrid products={mockHandbags} />
       </section>
     </div>
   );

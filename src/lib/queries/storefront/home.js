@@ -1,13 +1,17 @@
-import { getNewArrivals } from "./products";
-import { getCategories } from "./categories";
+import { getNewArrivals, getHomepageHandbags, getHeroSpecialOffers } from "./products";
+import { getHomepageCategories } from "./categories";
+import { getHomepageBrands } from "./brands";
 import { getActiveCollections } from "./collections";
 
 export async function getHomepageData() {
   // Use Promise.all to fetch independent bounded datasets in parallel
-  const [newArrivals, categories, collections] = await Promise.all([
+  const [newArrivals, categories, collections, handbags, brands, heroOffers] = await Promise.all([
     getNewArrivals(8),
-    getCategories(),
-    getActiveCollections()
+    getHomepageCategories(6),
+    getActiveCollections(),
+    getHomepageHandbags(4),
+    getHomepageBrands(8),
+    getHeroSpecialOffers(5)
   ]);
   
   // Note: The schema does not support explicit "Featured" boolean flags.
@@ -16,7 +20,10 @@ export async function getHomepageData() {
   
   return {
     newArrivals,
-    categories: categories.slice(0, 6), // Bound to 6 for homepage display
-    collections: collections.slice(0, 3) // Bound to 3 for homepage display
+    categories, // Bounded to 6 categories with latest products
+    collections: collections.slice(0, 3), // Bound to 3 for homepage display
+    handbags,
+    brands,
+    heroOffers
   };
 }

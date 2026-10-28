@@ -155,6 +155,79 @@ export async function getProductBySlug(slug) {
   return serializeProductDetail(pricedDoc);
 }
 
+function extractShortDescription(description) {
+  if (!description || typeof description !== "string") return null;
+  const lines = description
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(
+      (line) =>
+        line.length > 0 &&
+        !line.startsWith("#") &&
+        !line.startsWith("✅") &&
+        !line.startsWith("🧵") &&
+        !line.startsWith("🌟") &&
+        !line.startsWith("🎯") &&
+        !line.startsWith("✨") &&
+        !line.startsWith("💼")
+    );
+  const firstParagraph = lines[0] || "";
+  return firstParagraph.replace(/\*\*/g, "").slice(0, 180) || null;
+}
+
+export async function getHeroSpecialOffers(limit = 5) {
+  await dbConnect();
+
+  const docs = await Product.find({ isActive: true })
+    .sort({ createdAt: -1 })
+    .limit(36)
+    .populate("brand", "name slug")
+    .populate("category", "name slug")
+    .select(
+      "name slug description price compareAtPrice images brand category collections stock isActive createdAt"
+    )
+    .lean();
+
+  if (!docs.length) return [];
+
+  const pricedDocs = await resolvePricingForProducts(docs);
+
+  const discounted = [];
+  const regular = [];
+
+  for (const doc of pricedDocs) {
+    const hasPromo = Boolean(doc.pricing?.hasPromotion);
+    const hasCompareDiscount =
+      doc.compareAtPrice && doc.compareAtPrice > doc.price;
+    if (hasPromo || hasCompareDiscount) {
+      discounted.push(doc);
+    } else {
+      regular.push(doc);
+    }
+  }
+
+  const selected = [...discounted, ...regular].slice(0, limit);
+
+  return selected.map((doc) => {
+    const card = serializeProductCard(doc);
+    const hasExistingDiscount =
+      Boolean(card.pricing?.hasPromotion) ||
+      (card.compareAtPrice && card.compareAtPrice > card.price);
+
+    return {
+      ...card,
+      compareAtPrice: hasExistingDiscount
+        ? card.compareAtPrice
+        : Math.round(card.price * 1.15),
+      category:
+        doc.category && doc.category.name
+          ? { name: doc.category.name, slug: doc.category.slug }
+          : null,
+      shortDescription: extractShortDescription(doc.description),
+    };
+  });
+}
+
 export async function getNewArrivals(limit = 8) {
   await dbConnect();
   
@@ -166,6 +239,55 @@ export async function getNewArrivals(limit = 8) {
     .lean();
     
   const pricedDocs = await resolvePricingForProducts(docs);
+  return pricedDocs.map(serializeProductCard);
+}
+
+export async function getHomepageHandbags(limit = 4, excludeNewArrivalCount = 8) {
+  await dbConnect();
+
+  const [handbagCategories, topNewArrivals] = await Promise.all([
+    Category.find({
+      isActive: true,
+      slug: {
+        $in: [
+          "women-handbags",
+          "handbags",
+          "bowler-style-mini-bags",
+          "belted-crossbody-bags",
+          "slouchy-hobo-totes",
+          "men-handbags",
+        ],
+      },
+    })
+      .select("_id slug")
+      .lean(),
+    Product.find({ isActive: true })
+      .sort({ createdAt: -1 })
+      .limit(excludeNewArrivalCount)
+      .select("_id")
+      .lean(),
+  ]);
+
+  if (!handbagCategories.length) return [];
+
+  const categoryIds = handbagCategories.map((c) => c._id);
+  const newArrivalIds = new Set(topNewArrivals.map((p) => p._id.toString()));
+
+  const docs = await Product.find({
+    isActive: true,
+    category: { $in: categoryIds },
+  })
+    .sort({ createdAt: -1 })
+    .limit(Math.min(limit + excludeNewArrivalCount, 24))
+    .populate("brand", "name slug")
+    .select("name slug price compareAtPrice images brand category collections stock isActive createdAt")
+    .lean();
+
+  const nonOverlapping = docs.filter((d) => !newArrivalIds.has(d._id.toString()));
+  const overlapping = docs.filter((d) => newArrivalIds.has(d._id.toString()));
+  const selectedDocs = [...nonOverlapping, ...overlapping].slice(0, limit);
+
+  const pricedDocs = await resolvePricingForProducts(selectedDocs);
   return pricedDocs.map(serializeProductCard);
 }
 
