@@ -30,15 +30,23 @@ function extractShortHighlights(description) {
   const highlights = [];
   for (const line of lines) {
     const trimmed = line.trim();
-    if (
-      trimmed.startsWith("✅") ||
-      trimmed.startsWith("✓") ||
-      trimmed.startsWith("🧵") ||
-      trimmed.startsWith("🎯") ||
-      trimmed.startsWith("🌿") ||
-      trimmed.startsWith("🌟")
-    ) {
-      highlights.push(trimmed);
+    if (!trimmed || trimmed.startsWith("✨ Pro Tip") || trimmed.startsWith("💼 Please note")) {
+      continue;
+    }
+    const match = trimmed.match(/^([✅✓✔🧵🎯🌿🌟✨•\-*▪◆]|\d+[.)])\s+(.+)$/);
+    if (match && match[2]) {
+      const marker = match[1];
+      const icon =
+        marker === "-" ||
+        marker === "•" ||
+        marker === "*" ||
+        marker === "▪" ||
+        marker === "◆" ||
+        /^\d+[.)]$/.test(marker)
+          ? "✦"
+          : marker;
+      const cleanText = match[2].replace(/\*\*([^*]+)\*\*/g, "$1").trim();
+      highlights.push({ icon, text: cleanText });
       if (highlights.length >= 5) break;
     }
   }
@@ -143,15 +151,22 @@ export default async function ProductPage({ params }) {
             />
           </div>
 
-          {/* Quick Key Highlights (La Forma Style Feature Bullet Points) */}
+          {/* Quick Key Highlights (Fancy Luxury Feature Bullet Points) */}
           {shortHighlights.length > 0 && (
-            <div className="my-5 p-4 bg-neutral-50 rounded-xl border border-neutral-100 space-y-2">
-              <h4 className="text-xs font-semibold tracking-wider uppercase text-neutral-500">Key Highlights</h4>
-              <ul className="space-y-1.5 text-xs text-neutral-700 leading-relaxed">
+            <div className="my-5 p-4 md:p-5 bg-gradient-to-br from-[#faf6ee] via-[#fcfaf5] to-[#f3ead8]/70 rounded-xl border border-[#e5d8be] shadow-2xs space-y-2.5">
+              <div className="flex items-center gap-2 border-b border-[#e8dec8] pb-2">
+                <span className="text-[#b89348] text-xs">✦</span>
+                <h2 className="text-xs font-semibold tracking-[0.16em] uppercase text-[#5a4622]">
+                  Key Luxury Highlights
+                </h2>
+              </div>
+              <ul className="space-y-2 text-xs md:text-[13px] text-[#2b261e] leading-relaxed pt-0.5">
                 {shortHighlights.map((hl, idx) => (
-                  <li key={idx} className="flex items-start gap-2">
-                    <span className="shrink-0">{hl.slice(0, 2).trim() || "✓"}</span>
-                    <span>{hl.replace(/^[✅✓🧵🎯🌿🌟]\s*/, "")}</span>
+                  <li key={idx} className="flex items-start gap-2.5">
+                    <span className="shrink-0 w-5 h-5 rounded-md bg-[#f2e8d5] border border-[#dccaa6] text-[#8c6928] flex items-center justify-center text-[11px] font-semibold mt-0.5">
+                      {hl.icon}
+                    </span>
+                    <span className="font-medium text-neutral-800">{hl.text}</span>
                   </li>
                 ))}
               </ul>

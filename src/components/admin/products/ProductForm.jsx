@@ -6,6 +6,7 @@ import Link from 'next/link';
 import ImageUploader from './ImageUploader';
 import VariantManager from './VariantManager';
 import AttributesManager from './AttributesManager';
+import ProductDescriptionRenderer from '@/components/storefront/product/ProductDescriptionRenderer';
 
 function slugify(text) {
   return (text || '')
@@ -17,82 +18,135 @@ function slugify(text) {
     .replace(/^-+|-+$/g, '');
 }
 
-function renderDescriptionPreview(content) {
-  if (!content || !content.trim()) {
-    return (
-      <div className="py-8 text-center text-xs text-gray-400 italic">
-        No description content to preview. Type above or click &ldquo;✨ Insert La Forma Template&rdquo;.
-      </div>
-    );
+function generateDynamicLuxuryTemplate({ productName, brandName, categoryName }) {
+  const displayName = (productName || '').trim() || 'Signature Luxury Piece';
+  const displayBrand = (brandName || '').trim() || 'LUXE Maison';
+  const displayCategory = (categoryName || '').trim() || 'Luxury Collection';
+  const combined = `${displayName} ${displayCategory}`.toLowerCase();
+
+  if (/(jean|denim|trouser|pant|wide-leg)/.test(combined)) {
+    return `## Effortless Couture Silhouette — ${displayName}
+Crafted by **${displayBrand}**, the **${displayName}** elevates modern denim into an architectural wardrobe statement. Cut with a flattering high-to-mid rise and a fluid leg profile, it balances structured tailoring with all-day comfort.
+
+## Key Luxury Highlights:
+✅ **Sculpted Tailoring**: Contoured waist and hip geometry for an elongated, flattering silhouette
+🧵 **Couture-Grade Denim**: Premium heavyweight weave with a soft, breathable interior hand-feel
+🎯 **Signature Detailing**: Authentic ${displayBrand} pocket embellishments and precision contrast stitching
+🌿 **Artisanal Wash**: Rich, colorfast indigo treatment that retains structure wear after wear
+🌟 **Bespoke Hardware**: Custom engraved metallic rivets, button closure, and reinforced belt loops
+
+✨ Pro Tip:
+Pair with a tucked silk blouse, knit cardigan, or pointed-toe heels to accentuate the leg-lengthening drape.
+
+💼 Please note:
+Turn inside out and wash cold on a gentle cycle or dry clean to preserve the artisanal wash and pocket embellishments.`;
   }
 
-  const lines = content.split('\n');
-  const elements = [];
-  let keyIndex = 0;
+  if (/(heel|shoe|slingback|boot|loafer|pump|sandal|sneaker|footwear)/.test(combined)) {
+    return `## Sculptural Elegance in Every Step — ${displayName}
+Masterfully designed by **${displayBrand}**, the **${displayName}** unites runway-worthy proportions with artisanal shoemaking. Engineered for poised movement, it transitions effortlessly from daytime refinement to evening galas.
 
-  for (let i = 0; i < lines.length; i++) {
-    const rawLine = lines[i];
-    const trimmed = rawLine.trim();
+## Key Luxury Highlights:
+✅ **Balanced Arch Geometry**: Anatomically engineered heel and arch support for lasting poise and stability
+🧵 **Artisanal Upper Finish**: Supple, hand-selected materials paired with a smooth leather-lined interior
+🎯 **Precision Fit**: Contoured toe box and secure strap engineering for a custom-tailored feel
+🌿 **Cushioned Footbed**: Softened impact core that delivers comfort without sacrificing a sleek profile
+🌟 **Maison Finishing**: Signature ${displayBrand} sole detailing and unmistakable couture craftsmanship
 
-    if (!trimmed) continue;
+✨ Pro Tip:
+If you are between half sizes or prefer extra room in the forefoot, we recommend selecting the next size up.
 
-    if (trimmed.startsWith('### ')) {
-      elements.push(
-        <h4 key={keyIndex++} className="text-sm font-semibold text-neutral-900 mt-4 mb-2 tracking-tight">
-          {trimmed.replace(/^###\s+/, '')}
-        </h4>
-      );
-    } else if (trimmed.startsWith('## ')) {
-      elements.push(
-        <h3 key={keyIndex++} className="text-base font-medium text-neutral-900 mt-5 mb-2 tracking-tight">
-          {trimmed.replace(/^##\s+/, '')}
-        </h3>
-      );
-    } else if (trimmed.startsWith('✨ Pro Tip:') || trimmed.startsWith('Pro Tip:')) {
-      const tipText = trimmed.replace(/^✨?\s*Pro Tip:\s*/i, '');
-      elements.push(
-        <div key={keyIndex++} className="my-3 p-3.5 bg-amber-50/70 border-l-4 border-amber-400 rounded-r-lg text-amber-950 text-xs leading-relaxed">
-          <span className="font-semibold block mb-0.5 text-amber-900">
-            ✨ Pro Tip:
-          </span>
-          {tipText || (lines[i + 1] ? lines[++i].trim() : '')}
-        </div>
-      );
-    } else if (trimmed.startsWith('💼 Please note:') || trimmed.startsWith('Please note:') || trimmed.startsWith('Note:')) {
-      const noteText = trimmed.replace(/^💼?\s*Please note:\s*|^Note:\s*/i, '');
-      elements.push(
-        <div key={keyIndex++} className="my-3 p-3.5 bg-neutral-100/80 border-l-4 border-neutral-500 rounded-r-lg text-neutral-800 text-xs leading-relaxed">
-          <span className="font-semibold block mb-0.5 text-neutral-900">
-            💼 Please note:
-          </span>
-          {noteText || (lines[i + 1] ? lines[++i].trim() : '')}
-        </div>
-      );
-    } else if (
-      trimmed.startsWith('✅') ||
-      trimmed.startsWith('🧵') ||
-      trimmed.startsWith('🎯') ||
-      trimmed.startsWith('🌿') ||
-      trimmed.startsWith('🌟') ||
-      trimmed.startsWith('- ') ||
-      trimmed.startsWith('• ')
-    ) {
-      elements.push(
-        <div key={keyIndex++} className="flex items-start gap-2 py-0.5 text-xs text-neutral-700">
-          <span className="shrink-0 mt-0.5">{trimmed.slice(0, 2).trim() || '•'}</span>
-          <span>{trimmed.replace(/^[✅🧵🎯🌿🌟•\-]\s*/, '')}</span>
-        </div>
-      );
-    } else {
-      elements.push(
-        <p key={keyIndex++} className="text-xs text-neutral-600 leading-relaxed mb-2">
-          {trimmed}
-        </p>
-      );
-    }
+💼 Please note:
+Includes a protective dust bag for travel and closet storage. Avoid prolonged exposure to moisture or abrasive surfaces.`;
   }
 
-  return <div className="space-y-1">{elements}</div>;
+  if (/(necklace|chain|jewelry|ring|bracelet|earring|pendant|choker|hoop|horsebit)/.test(combined)) {
+    return `## Radiant Maison Craftsmanship — ${displayName}
+An iconic statement from **${displayBrand}**, the **${displayName}** captures light from every angle. Hand-polished links and sculptural hardware create a timeless focal point that elevates both crisp tailoring and evening ensembles.
+
+## Key Luxury Highlights:
+✅ **High-Luster Finish**: Precious metal plating protected by a tarnish-resistant mirror glaze
+🧵 **Fluid Articulation**: Hand-assembled links for a balanced, comfortable drape against the skin
+🎯 **Secure Engineering**: Precision clasp closure designed for effortless, confident wear
+🌿 **Skin-Friendly Build**: Hypoallergenic, nickel-free construction suitable for sensitive skin
+🌟 **Hallmark Authenticity**: Discreet ${displayBrand} engraving for unmistakable heritage prestige
+
+✨ Pro Tip:
+Wear solo as a statement centerpiece or layer with delicate chains and cuffs for a curated editorial look.
+
+💼 Please note:
+Store in its lined presentation pouch away from direct perfumes, lotions, and humidity to maintain mirror brilliance.`;
+  }
+
+  if (/(watch|timepiece|chronograph|quartz|automatic|band)/.test(combined)) {
+    return `## Precision Horology & Timeless Prestige — ${displayName}
+Engineered to the exacting standards of **${displayBrand}**, the **${displayName}** unites horological reliability with refined case architecture for a distinguished presence on the wrist.
+
+## Key Luxury Highlights:
+✅ **Calibrated Movement**: High-precision timekeeping engineered for dependable daily performance
+🧵 **Crystal & Bezel**: Scratch-resistant crystal face paired with a hand-finished case bezel
+🎯 **Ergonomic Wrist Fit**: Contoured lugs and adjustable strap/bracelet for tailored comfort
+🌿 **Sealed Protection**: Water-resistant construction guarding against everyday splashes and humidity
+🌟 **Signature Dial**: Iconic ${displayBrand} dial markers, crown detailing, and engraved caseback
+
+✨ Pro Tip:
+Adjust the clasp micro-settings so the case sits centered on your wrist bone for optimal balance.
+
+💼 Please note:
+Delivered in a signature presentation box. Keep away from strong magnetic fields and extreme temperature shocks.`;
+  }
+
+  if (/(bag|handbag|tote|crossbody|clutch|purse|hobo|satchel|messenger|bowler)/.test(combined)) {
+    return `## Architectural Luxury & Everyday Versatility — ${displayName}
+A signature creation by **${displayBrand}**, the **${displayName}** blends structured leatherwork with an intelligently organized interior—transitioning seamlessly from daytime appointments to evening soirées.
+
+## Key Luxury Highlights:
+✅ **Sculpted Silhouette**: Engineered to maintain its natural architectural form over years of use
+🧵 **Supple Craftsmanship**: Full-bodied exterior paired with a soft protective interior lining
+🎯 **Smart Organization**: Thoughtfully proportioned compartments for essentials and small leather goods
+🌿 **Artisan Edge Sealing**: Reinforced base corners and hand-painted edges for lasting durability
+🌟 **Polished Hardware**: Custom ${displayBrand} metallic accents and versatile carry options
+
+✨ Pro Tip:
+Store stuffed with acid-free tissue inside its protective dust bag when not in use to preserve the structured profile.
+
+💼 Please note:
+Subtle variations in grain and texture are natural hallmarks of authentic luxury materials.`;
+  }
+
+  if (/(hat|cloche|bucket|scarf|scarves|belt|sunglass|eyewear|clip|scrunchie|charm|bandana)/.test(combined)) {
+    return `## Finishing Touch of Couture Distinction — ${displayName}
+Thoughtfully crafted by **${displayBrand}**, the **${displayName}** brings heritage accessory artistry to your wardrobe—transforming any silhouette with unmistakable Parisian-inspired charm.
+
+## Key Luxury Highlights:
+✅ **Sculpted Proportions**: Designed for a comfortable, universally flattering profile
+🧵 **Artisanal Embellishments**: Hand-applied accents and premium natural-blend materials
+🎯 **Effortless Wearability**: Lightweight construction that stays securely in place throughout the day
+🌿 **Breathable Interior**: Refined inner finish engineered for multi-season comfort
+🌟 **Couture Detailing**: Signature ${displayBrand} finishing touches for elevated everyday styling
+
+✨ Pro Tip:
+Style with a tailored coat, cashmere knitwear, or monochrome separates to let the artisanal details take center stage.
+
+💼 Please note:
+Spot clean gently with a soft dry brush or cloth, and store flat or on a form to preserve the original shape.`;
+  }
+
+  return `## Refined Sartorial Craftsmanship — ${displayName}
+Designed by **${displayBrand}**, the **${displayName}** exemplifies modern luxury in **${displayCategory}**—uniting sumptuous textile quality with an effortlessly flattering cut built for timeless appeal.
+
+## Key Luxury Highlights:
+✅ **Tailored Drape**: Flattering silhouette engineered for natural, unrestricted movement
+🧵 **Sumptuous Fibers**: Breathable luxury yarns and fabrics with rich tactile depth
+🎯 **Precision Construction**: Finely stitched seams, structured trims, and balanced proportions
+🌿 **Lasting Quality**: Pilling-resistant and colorfast finish built for wardrobe longevity
+🌟 **Maison Signature**: Authentic ${displayBrand} motif, custom hardware, and tonal couture detailing
+
+✨ Pro Tip:
+Designed to fit true to size for a classic tailored profile; select one size up if you prefer a relaxed, layered look.
+
+💼 Please note:
+Specialist dry clean or gentle cold hand-wash flat dry is recommended to protect the delicate fibers and structure.`;
 }
 
 export default function ProductForm({
@@ -158,23 +212,19 @@ export default function ProductForm({
   }
 
   function handleInsertTemplate() {
-    const template = `### Tailored Perfection for Your Luxury Collection
-Crafted to preserve your bag’s natural shape and protect the delicate interior. Handcrafted with dual-layer structure to support the curved base, prevent corner sagging, and keep leather showroom-fresh for years.
+    const selectedBrandObj = brands.find(b => String(b._id) === String(brand));
+    const selectedCategoryObj = categories.find(c => String(c._id) === String(category));
 
-### Why It's Essential:
-✅ Sculpted support for a supple silhouette
-🧵 Dual-layer design: inner structural core + removable washable cover
-🎯 Model-specific precision tailored to exact bag dimensions
-🌿 Sustainable luxury crafted with eco-conscious, breathable fabric
-🌟 Invisible closure and discreet branded details
+    const template = generateDynamicLuxuryTemplate({
+      productName: name,
+      brandName: selectedBrandObj?.name || '',
+      categoryName: selectedCategoryObj?.name || '',
+    });
 
-✨ Pro Tip:
-Choose the exact size for your bag to ensure a seamless fit. Still unsure? Our concierge team is ready to assist you.
-
-💼 Please note:
-The handbag shown in product images is for presentation only and is not included.`;
-
-    if (!description.trim() || window.confirm('Insert luxury La Forma description template?')) {
+    if (
+      !description.trim() ||
+      window.confirm('Replace current description with a tailored luxury description for this product?')
+    ) {
       setDescription(template);
       if (errors.description) setErrors(prev => ({ ...prev, description: null }));
     }
@@ -571,10 +621,10 @@ The handbag shown in product images is for presentation only and is not included
                   type="button"
                   onClick={handleInsertTemplate}
                   className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium text-amber-900 bg-amber-50 hover:bg-amber-100 border border-amber-200 rounded-md transition-colors"
-                  title="Insert luxury template formatted like La Forma"
+                  title="Auto-generate a luxury description tailored to the current Product Name, Category, and Brand"
                 >
                   <span>✨</span>
-                  <span>Insert La Forma Template</span>
+                  <span>Generate Luxury Description</span>
                 </button>
               </div>
 
@@ -584,41 +634,41 @@ The handbag shown in product images is for presentation only and is not included
                   <div className="flex flex-wrap items-center gap-1 p-1.5 bg-gray-50 border border-b-0 border-gray-300 rounded-t-lg text-xs text-gray-600">
                     <button
                       type="button"
-                      onClick={() => handleInsertFormat('**', '**', 'bold text')}
+                      onClick={() => handleInsertFormat('**', '**', 'Keyword')}
                       className="px-2 py-1 rounded hover:bg-white hover:text-gray-900 font-bold border border-transparent hover:border-gray-200 transition-colors"
-                      title="Bold text"
+                      title="Highlight Keyword (Bold)"
                     >
-                      B
+                      B (Highlight)
                     </button>
                     <button
                       type="button"
-                      onClick={() => handleInsertFormat('### ', '\n', 'Section Title')}
+                      onClick={() => handleInsertFormat('## ', '\n', 'Section Heading')}
                       className="px-2 py-1 rounded hover:bg-white hover:text-gray-900 font-semibold border border-transparent hover:border-gray-200 transition-colors"
-                      title="Heading"
+                      title="Highlighted H2 Heading"
                     >
-                      H3
+                      H2 Heading
                     </button>
                     <span className="w-px h-4 bg-gray-300 mx-1" />
                     <button
                       type="button"
-                      onClick={() => handleInsertFormat('• ', '', 'Bullet item')}
+                      onClick={() => handleInsertFormat('• **Feature**: ', '', 'Detail description')}
                       className="px-2 py-1 rounded hover:bg-white hover:text-gray-900 border border-transparent hover:border-gray-200 transition-colors"
-                      title="Bullet point"
+                      title="Fancy Bullet Card"
                     >
-                      • Bullet
+                      • Fancy Bullet
                     </button>
                     <button
                       type="button"
-                      onClick={() => handleInsertFormat('✅ ', '', 'Feature benefit')}
+                      onClick={() => handleInsertFormat('✅ **Highlight**: ', '', 'Benefit description')}
                       className="px-2 py-1 rounded hover:bg-white hover:text-gray-900 border border-transparent hover:border-gray-200 transition-colors"
-                      title="Checkmark feature"
+                      title="Checkmark Feature Card"
                     >
-                      ✅ Feature
+                      ✅ Feature Card
                     </button>
                     <span className="w-px h-4 bg-gray-300 mx-1" />
                     <button
                       type="button"
-                      onClick={() => handleInsertFormat('\n\n✨ Pro Tip:\n', '\n', 'Enter sizing or care tip...')}
+                      onClick={() => handleInsertFormat('\n\n✨ Pro Tip:\n', '\n', 'Enter styling or sizing tip...')}
                       className="px-2 py-1 rounded hover:bg-amber-100 hover:text-amber-900 border border-transparent hover:border-amber-200 transition-colors"
                       title="Pro Tip callout box"
                     >
@@ -626,7 +676,7 @@ The handbag shown in product images is for presentation only and is not included
                     </button>
                     <button
                       type="button"
-                      onClick={() => handleInsertFormat('\n\n💼 Please note:\n', '\n', 'Handbag shown is not included...')}
+                      onClick={() => handleInsertFormat('\n\n💼 Please note:\n', '\n', 'Enter care or packaging note...')}
                       className="px-2 py-1 rounded hover:bg-gray-200 hover:text-gray-900 border border-transparent hover:border-gray-300 transition-colors"
                       title="Please note disclaimer"
                     >
@@ -644,7 +694,7 @@ The handbag shown in product images is for presentation only and is not included
                       setDescription(e.target.value);
                       if (errors.description) setErrors(prev => ({ ...prev, description: null }));
                     }}
-                    placeholder="Describe the product materials, craftsmanship, fitting... Use toolbar buttons or insert La Forma template."
+                    placeholder="Paste your description with headings & bullet points, or click '✨ Generate Luxury Description'..."
                     className={`w-full rounded-b-lg border px-3.5 py-2.5 text-sm text-gray-900 focus:outline-none focus:ring-2 font-mono ${
                       errors.description
                         ? 'border-red-300 focus:ring-red-500/20 focus:border-red-500'
@@ -653,8 +703,14 @@ The handbag shown in product images is for presentation only and is not included
                   />
                 </div>
               ) : (
-                <div className="w-full min-h-[220px] rounded-lg border border-gray-200 bg-neutral-50/50 p-5 text-sm text-gray-800">
-                  {renderDescriptionPreview(description)}
+                <div className="w-full min-h-[220px] rounded-lg border border-gray-200 bg-white p-5 text-sm text-gray-800">
+                  {description && description.trim() ? (
+                    <ProductDescriptionRenderer content={description} />
+                  ) : (
+                    <div className="py-8 text-center text-xs text-gray-400 italic">
+                      No description content to preview. Paste your description or click &ldquo;✨ Generate Luxury Description&rdquo;.
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -663,7 +719,7 @@ The handbag shown in product images is for presentation only and is not included
                   <p className="text-xs text-red-600">{errors.description}</p>
                 ) : (
                   <span className="text-[11px] text-gray-400">
-                    Supports headings (###), checkmarks (✅), bullet points (•), ✨ Pro Tip, and 💼 Note.
+                    Headings (## or lines ending with :) render as highlighted H2s; bullets (•, -, *, ✅) render as fancy luxury cards.
                   </span>
                 )}
                 <span className="text-[11px] text-gray-400">{description.length}/10000</span>
